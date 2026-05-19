@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velaground · A quarterly subscription kit for your postcode</title>
+<meta name="description" content="A quarterly subscription kit that helps your body manage what your environment is exposing it to.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200;0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F5F0EB; --cream-deep: #EBE4DB; --cream-soft: #F9F5F1;
+  --sage-deep: #2A3D35; --sage-mid: #4A5D52; --sage-soft: #5B7B6F; --sage-pale: #9FD4C2;
+  --terracotta: #D85A30; --terra-soft: #E07A55; --terra-pale: #FAECE7;
+  --sand: #C4A882; --sand-pale: #E5D4B5;
+  --ink: #1A1F1C; --ink-soft: #3D423F; --ink-mid: #6B7565;
+  --rule: #C9C0B3; --rule-soft: #DDD5C8;
+  --serif: 'Newsreader', Georgia, serif;
+  --sans: 'Inter Tight', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --max: 1680px;
+  --gutter: clamp(24px, 5vw, 96px);
+  --h1: clamp(42px, 5.4vw, 76px);
+  --h2: clamp(32px, 3.8vw, 56px);
+  --h3: clamp(28px, 2.8vw, 40px);
+  --body-lg: 17px; --body: 15px; --body-sm: 13px; --eyebrow: 10px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { background: var(--cream); color: var(--ink); font-family: var(--sans); font-size: var(--body); line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+::selection { background: var(--terracotta); color: var(--cream); }
+img { display: block; max-width: 100%; height: auto; }
+.container { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+.mono { font-family: var(--mono); font-size: var(--eyebrow); letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage-mid); }
+
+/* Image placeholder */
+.ph {
+  background: linear-gradient(135deg, var(--cream-deep) 0%, var(--sand-pale) 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: var(--sage-mid); font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase; text-align: center;
+  padding: 24px; position: relative; overflow: hidden;
+}
+.ph::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(74,93,82,0.04) 12px, rgba(74,93,82,0.04) 13px);
+}
+.ph .ph-icon { width: 36px; height: 36px; opacity: 0.35; position: relative; z-index: 1; }
+.ph span { position: relative; z-index: 1; }
+
+/* Reveal */
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity 1s var(--ease-out), transform 1s var(--ease-out); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal[data-delay="1"] { transition-delay: 0.10s; }
+.reveal[data-delay="2"] { transition-delay: 0.20s; }
+.reveal[data-delay="3"] { transition-delay: 0.30s; }
+
+/* Top logo (scrolls away) */
+.top-logo { position: absolute; top: 40px; left: var(--gutter); z-index: 50; }
+.top-logo svg { height: 32px; width: auto; display: block; }
+
+/* Floating CTA */
+.floating-cta {
+  position: fixed; bottom: 32px; right: 32px; z-index: 80;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  background: var(--sage-deep); color: var(--cream); padding: 16px 26px;
+  text-decoration: none; border-radius: 100px;
+  display: inline-flex; align-items: center; gap: 12px;
+  opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none;
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out), background 0.25s;
+  box-shadow: 0 12px 40px rgba(42, 61, 53, 0.25), 0 4px 16px rgba(42, 61, 53, 0.15);
+}
+.floating-cta.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.floating-cta:hover { background: var(--terracotta); transform: translateY(-2px) scale(1.02); box-shadow: 0 16px 48px rgba(216, 90, 48, 0.3); }
+.floating-cta:active { transform: translateY(0) scale(0.98); }
+.floating-cta .arrow {
+  width: 6px; height: 6px;
+  border-right: 1.5px solid currentColor; border-top: 1.5px solid currentColor;
+  transform: rotate(45deg); transition: transform 0.25s;
+}
+.floating-cta:hover .arrow { transform: rotate(45deg) translateX(2px); }
+
+/* Scroll progress */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px;
+  background: rgba(216, 90, 48, 0.15); z-index: 90;
+  opacity: 0; transition: opacity 0.4s;
+}
+.scroll-progress.visible { opacity: 1; }
+.scroll-progress-bar { height: 100%; background: var(--terracotta); width: 0%; transition: width 0.1s linear; }
+
+/* Hero */
+.hero {
+  background: var(--sage-deep); color: var(--cream);
+  min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+  align-items: stretch; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: 30%; left: 25%;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(216,90,48,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content {
+  padding: 200px var(--gutter) 96px calc(var(--gutter) + ((100vw - var(--max)) / 2));
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 2;
+}
+@media (max-width: 1792px) { .hero-content { padding-left: var(--gutter); } }
+.hero-eyebrow {
+  font-family: var(--mono); font-size: var(--eyebrow); letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--sage-pale); margin-bottom: 40px;
+  display: flex; align-items: center; gap: 12px; will-change: transform;
+}
+.hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--terracotta); animation: pulse 2.4s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
+.hero-headline {
+  font-family: var(--serif); font-weight: 300; font-size: var(--h1);
+  line-height: 1.02; letter-spacing: -0.03em; color: var(--cream);
+  margin-bottom: 32px; max-width: 620px; will-change: transform;
+}
+.hero-headline em { font-style: italic; color: var(--terra-soft); font-weight: 400; }
+.hero-body {
+  font-size: var(--body-lg); line-height: 1.6; color: var(--cream-deep);
+  max-width: 500px; margin-bottom: 48px; opacity: 0.82; will-change: transform;
+}
+.hero-actions { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+.btn-primary {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  background: var(--cream); color: var(--sage-deep); padding: 18px 32px;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 12px;
+  position: relative; overflow: hidden; transition: transform 0.25s var(--ease);
+}
+.btn-primary::before {
+  content: ''; position: absolute; inset: 0; background: var(--terracotta);
+  transform: translateY(101%); transition: transform 0.4s var(--ease-out); z-index: 0;
+}
+.btn-primary span { position: relative; z-index: 1; transition: color 0.3s; }
+.btn-primary:hover::before { transform: translateY(0); }
+.btn-primary:hover span { color: var(--cream); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-secondary {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--sage-pale); text-decoration: none; padding: 4px 0;
+  border-bottom: 1px solid rgba(159, 212, 194, 0.3); transition: border-color 0.2s, color 0.2s;
+}
+.btn-secondary:hover { color: var(--cream); border-color: var(--sage-pale); }
+.hero-image { position: relative; overflow: hidden; border-left: 1px solid rgba(159, 212, 194, 0.12); }
+.hero-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-image .ph {
+  height: 100%; background: linear-gradient(160deg, #2F4540, #1F2D27);
+  color: rgba(159, 212, 194, 0.4); border: none;
+}
+.hero-image .ph::before { background: repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(159,212,194,0.025) 12px, rgba(159,212,194,0.025) 13px); }
+.hero-image .ph-icon { animation: float 6s ease-in-out infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.hero-cue {
+  position: absolute; bottom: 36px;
+  left: calc(var(--gutter) + max(0px, (100vw - var(--max)) / 2));
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(159, 212, 194, 0.5);
+  display: flex; align-items: center; gap: 14px; z-index: 3;
+}
+.hero-cue .line { width: 28px; height: 1px; background: rgba(159, 212, 194, 0.4); animation: lineGrow 2.4s ease-in-out infinite; }
+@keyframes lineGrow { 0%,100% { transform: scaleX(0.4); transform-origin: left; } 50% { transform: scaleX(1); transform-origin: left; } }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero-image { min-height: 400px; } .hero-content { padding-top: 140px; padding-bottom: 80px; } }
+
+/* Marquee */
+.marquee { background: var(--cream); border-bottom: 1px solid var(--rule-soft); padding: 24px 0; overflow: hidden; }
+.marquee-track {
+  display: flex; gap: 80px; white-space: nowrap;
+  animation: marquee 40s linear infinite;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage-mid);
+}
+.marquee-track span { display: inline-flex; align-items: center; gap: 14px; }
+.marquee-track span::before { content: ''; width: 6px; height: 6px; background: var(--terracotta); border-radius: 50%; flex-shrink: 0; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Section shared */
+section { position: relative; }
+.section-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 32px 0 24px; border-bottom: 1px solid var(--rule-soft); margin-bottom: 88px;
+}
+.section-num { font-family: var(--mono); font-size: var(--eyebrow); letter-spacing: 0.22em; text-transform: uppercase; color: var(--terracotta); font-weight: 500; }
+.section-meta { font-family: var(--mono); font-size: var(--eyebrow); letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); }
+
+/* Positioning */
+.positioning { padding: 120px 0; background: var(--cream); }
+.positioning-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 8vw, 140px); align-items: start; }
+@media (max-width: 900px) { .positioning-grid { grid-template-columns: 1fr; gap: 56px; } }
+.positioning-left h2 { font-family: var(--serif); font-weight: 300; font-size: var(--h2); line-height: 1.05; letter-spacing: -0.025em; color: var(--sage-deep); margin-bottom: 28px; }
+.positioning-left h2 em { font-style: italic; color: var(--terracotta); }
+.positioning-left p { font-size: 16px; color: var(--ink-soft); max-width: 480px; line-height: 1.75; margin-bottom: 16px; }
+.trust-row { margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--rule-soft); display: grid; grid-template-columns: 1fr 1fr; gap: 16px 32px; }
+.trust-item { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage-mid); display: flex; align-items: center; gap: 10px; }
+.trust-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sand); flex-shrink: 0; position: relative; }
+.trust-dot::after { content: ''; position: absolute; inset: -3px; border: 1px solid var(--sand); border-radius: 50%; opacity: 0.4; }
+.what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
+@media (max-width: 600px) { .what-grid { grid-template-columns: 1fr; gap: 32px; } }
+.what-col-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage-deep); padding-bottom: 12px; border-bottom: 2px solid var(--sage-deep); margin-bottom: 18px; }
+.what-col-label.no { color: var(--terracotta); border-bottom-color: var(--terracotta); }
+.what-list { list-style: none; }
+.what-list li { font-size: 14.5px; color: var(--ink-soft); padding: 14px 0; border-bottom: 1px solid var(--rule-soft); line-height: 1.55; }
+
+/* Postcode */
+.postcode-section { background: var(--cream-deep); padding: 120px 0; position: relative; }
+.postcode-intro { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(48px, 7vw, 120px); align-items: end; margin-bottom: 56px; }
+@media (max-width: 900px) { .postcode-intro { grid-template-columns: 1fr; gap: 32px; } }
+.postcode-intro h2 { font-family: var(--serif); font-weight: 300; font-size: var(--h2); line-height: 1.05; letter-spacing: -0.025em; color: var(--sage-deep); }
+.postcode-intro h2 em { font-style: italic; color: var(--terracotta); }
+.postcode-intro p { font-size: 15px; color: var(--ink-soft); line-height: 1.7; }
+.postcode-form { display: flex; max-width: 560px; margin-bottom: 48px; border: 1px solid var(--sage-deep); background: var(--cream); transition: box-shadow 0.3s, transform 0.3s var(--ease); }
+.postcode-form:focus-within { box-shadow: 0 8px 32px rgba(42, 61, 53, 0.12); transform: translateY(-2px); }
+.postcode-input { flex: 1; border: none; outline: none; padding: 20px 24px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; background: transparent; color: var(--sage-deep); }
+.postcode-input::placeholder { color: var(--sage-mid); opacity: 0.6; letter-spacing: 0.1em; }
+.postcode-submit { padding: 20px 30px; background: var(--sage-deep); color: var(--cream); border: none; font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.25s; }
+.postcode-submit:hover { background: var(--terracotta); }
+.exposure-result { opacity: 0; max-height: 0; overflow: hidden; background: var(--cream); border: 1px solid var(--rule-soft); transition: opacity 0.7s var(--ease-out), max-height 0.8s var(--ease-out); }
+.exposure-result.visible { opacity: 1; max-height: 1400px; }
+.exposure-result.visible .er-inner { transform: translateY(0); }
+.er-inner { padding: 44px; transform: translateY(24px); transition: transform 0.7s 0.1s var(--ease-out); }
+.result-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--rule-soft); flex-wrap: wrap; gap: 16px; }
+.result-postcode { font-family: var(--serif); font-size: 34px; font-weight: 300; letter-spacing: -0.02em; color: var(--sage-deep); }
+.result-postcode em { font-family: var(--mono); font-style: normal; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-left: 14px; vertical-align: middle; border: 1px solid var(--terracotta); padding: 4px 10px; }
+.result-quarter { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); }
+.exposure-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule-soft); margin-bottom: 32px; }
+@media (max-width: 700px) { .exposure-grid { grid-template-columns: 1fr 1fr; } }
+.exposure-marker { background: var(--cream); padding: 26px 20px; transition: background 0.3s; }
+.exposure-marker:hover { background: var(--cream-soft); }
+.em-label { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); margin-bottom: 14px; }
+.em-value { font-family: var(--serif); font-size: 38px; font-weight: 300; letter-spacing: -0.025em; line-height: 1; margin-bottom: 8px; color: var(--sage-deep); }
+.em-unit { font-size: 11px; color: var(--ink-mid); margin-bottom: 12px; }
+.em-unit .level { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; margin-left: 4px; }
+.level.good { color: var(--sage-soft); background: rgba(91,123,111,0.1); }
+.level.moderate { color: var(--sand); background: rgba(196,168,130,0.12); }
+.level.elevated { color: var(--terra-soft); background: rgba(216,90,48,0.1); }
+.level.high { color: var(--terracotta); background: rgba(216,90,48,0.14); font-weight: 500; }
+.em-bar { height: 3px; background: var(--cream-deep); border-radius: 2px; overflow: hidden; }
+.em-bar-fill { height: 100%; background: linear-gradient(90deg, var(--sage-soft), var(--terracotta)); border-radius: 2px; width: 0%; transition: width 1.2s cubic-bezier(0.65, 0, 0.35, 1); }
+.result-note { font-size: 14.5px; color: var(--ink-soft); line-height: 1.7; max-width: 760px; margin-bottom: 28px; }
+.result-note strong { color: var(--sage-deep); font-weight: 500; }
+.result-actions { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.result-cta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; background: var(--sage-deep); color: var(--cream); padding: 16px 28px; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; transition: background 0.25s; }
+.result-cta:hover { background: var(--terracotta); }
+
+/* Products */
+.products { background: var(--cream); padding: 140px 0 80px; }
+.products-intro { max-width: 680px; margin-bottom: 100px; }
+.products-intro h2 { font-family: var(--serif); font-weight: 300; font-size: var(--h2); line-height: 1.05; letter-spacing: -0.025em; color: var(--sage-deep); margin-bottom: 24px; }
+.products-intro h2 em { font-style: italic; color: var(--terracotta); }
+.products-intro p { font-size: 16px; color: var(--ink-soft); line-height: 1.7; }
+.product-item { border-top: 1px solid var(--rule-soft); padding: 0; display: block; }
+.product-item:last-of-type { border-bottom: 1px solid var(--rule-soft); }
+.product-header { width: 100%; background: transparent; border: none; cursor: pointer; display: grid; grid-template-columns: 110px 1fr auto 28px; gap: clamp(20px, 3vw, 56px); align-items: center; padding: clamp(28px, 3vw, 44px) 0; text-align: left; transition: background 0.3s, padding 0.3s; font-family: inherit; }
+.product-header:hover { background: var(--cream-soft); }
+.product-header:hover .ph-name { color: var(--terracotta); }
+.ph-num { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--terracotta); }
+.ph-name { font-family: var(--serif); font-weight: 300; font-size: clamp(24px, 2.6vw, 38px); letter-spacing: -0.025em; line-height: 1.05; color: var(--sage-deep); transition: color 0.25s; }
+.ph-type { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sage-mid); text-align: right; max-width: 360px; line-height: 1.55; }
+.product-toggle { width: 18px; height: 18px; position: relative; transition: transform 0.5s var(--ease-out); flex-shrink: 0; justify-self: end; }
+.product-toggle::before, .product-toggle::after { content: ''; position: absolute; background: var(--terracotta); }
+.product-toggle::before { top: 50%; left: 0; right: 0; height: 1.5px; transform: translateY(-50%); }
+.product-toggle::after { left: 50%; top: 0; bottom: 0; width: 1.5px; transform: translateX(-50%); }
+.product-item.open .product-toggle { transform: rotate(135deg); }
+.product-body { max-height: 0; overflow: hidden; transition: max-height 0.7s var(--ease-out); }
+.product-item.open .product-body { max-height: 1800px; }
+.product-body-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 7vw, 120px); align-items: center; padding: 32px 0 72px; }
+.product-item:nth-of-type(even) .product-body-inner > .product-image-wrap { order: 2; }
+@media (max-width: 900px) {
+  .product-header { grid-template-columns: 80px 1fr 24px; }
+  .ph-type { display: none; }
+  .product-body-inner { grid-template-columns: 1fr; gap: 32px; padding: 16px 0 56px; }
+  .product-item:nth-of-type(even) .product-body-inner > .product-image-wrap { order: 0; }
+}
+.product-image-wrap { position: relative; overflow: hidden; aspect-ratio: 4/5; background: var(--cream-deep); }
+.product-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s var(--ease-out); }
+.product-image-wrap:hover img { transform: scale(1.02); }
+.product-image-wrap .ph { width: 100%; height: 100%; border: none; }
+.product-num { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 24px; display: flex; align-items: center; gap: 14px; }
+.product-num::after { content: ''; flex: 1; height: 1px; background: var(--rule-soft); max-width: 80px; }
+.product-name { font-family: var(--serif); font-weight: 300; font-size: var(--h3); letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 8px; color: var(--sage-deep); }
+.product-type { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); margin-bottom: 28px; }
+.product-desc { font-size: 15.5px; color: var(--ink-soft); line-height: 1.75; max-width: 500px; margin-bottom: 16px; }
+.product-desc strong { color: var(--sage-deep); font-weight: 500; }
+.product-detail { font-family: var(--serif); font-size: 15px; font-style: italic; color: var(--sage-mid); line-height: 1.55; max-width: 460px; padding: 20px 0 0; margin-top: 16px; border-top: 1px solid var(--rule-soft); position: relative; }
+.product-detail::before { content: '"'; font-family: var(--serif); font-size: 32px; color: var(--terracotta); position: absolute; top: 12px; left: -18px; line-height: 1; }
+.product-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 32px; }
+.tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 12px; border: 1px solid var(--rule); color: var(--sage-mid); background: var(--cream); transition: all 0.2s; }
+.tag:hover { border-color: var(--terracotta); color: var(--terracotta); }
+.variant-row { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+.variant { display: grid; grid-template-columns: 90px 1fr; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--rule-soft); align-items: baseline; }
+.variant:last-child { border-bottom: none; }
+.variant-name { font-family: var(--serif); font-size: 19px; font-style: italic; font-weight: 400; color: var(--terracotta); }
+.variant-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.55; }
+
+/* Velasphere */
+.velasphere-section { background: var(--sage-deep); color: var(--cream); padding: 140px 0 100px; position: relative; overflow: hidden; }
+.velasphere-section::before { content: ''; position: absolute; top: -10%; right: -10%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(216,90,48,0.07) 0%, transparent 60%); pointer-events: none; }
+.vs-intro { max-width: 800px; margin-bottom: 80px; position: relative; z-index: 2; }
+.vs-eyebrow { font-family: var(--mono); font-size: var(--eyebrow); letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-soft); margin-bottom: 28px; display: flex; align-items: center; gap: 14px; }
+.vs-eyebrow::after { content: ''; flex: 1; height: 1px; background: rgba(216, 90, 48, 0.3); max-width: 120px; }
+.vs-headline { font-family: var(--serif); font-weight: 300; font-size: var(--h2); line-height: 1.02; letter-spacing: -0.03em; color: var(--cream); margin-bottom: 32px; }
+.vs-headline em { font-style: italic; color: var(--terra-soft); }
+.vs-body { font-size: 16.5px; color: var(--cream-deep); opacity: 0.82; line-height: 1.7; max-width: 640px; }
+.vs-scroll-wrap { position: relative; margin-bottom: 100px; }
+.vs-sequence { display: flex; flex-direction: column; gap: clamp(60px, 7vw, 120px); }
+.vs-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 7vw, 120px); align-items: center; }
+.vs-row:nth-child(even) > .vs-row-image { order: 2; }
+@media (max-width: 900px) { .vs-row { grid-template-columns: 1fr; gap: 32px; } .vs-row:nth-child(even) > .vs-row-image { order: 0; } }
+.vs-row-image { position: relative; aspect-ratio: 4 / 5; width: 100%; overflow: hidden; background: #1F2D27; border: 1px solid rgba(159, 212, 194, 0.12); }
+.vs-row-image img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.8s var(--ease-out); }
+.vs-row-image:hover img { transform: scale(1.02); }
+.vs-row-image .ph { width: 100%; height: 100%; background: linear-gradient(165deg, #2F4540 0%, #1F2D27 100%); color: rgba(159, 212, 194, 0.5); border: none; }
+.vs-row-image .ph::before { background: repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(159,212,194,0.025) 12px, rgba(159,212,194,0.025) 13px); }
+.vs-row-image .ph .ph-icon { width: 80px; height: 80px; opacity: 0.55; }
+.vs-row-stage-num { position: absolute; bottom: 24px; left: 24px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terra-soft); background: rgba(42, 61, 53, 0.85); backdrop-filter: blur(8px); padding: 10px 16px; z-index: 2; }
+.vs-row-text { padding: 8px 0; }
+.vs-step-num { font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--terra-soft); margin-bottom: 28px; font-weight: 500; }
+.vs-step-title { font-family: var(--serif); font-weight: 300; font-size: var(--h3); letter-spacing: -0.025em; line-height: 1.05; color: var(--cream); margin-bottom: 28px; }
+.vs-step-title em { font-style: italic; color: var(--terra-soft); }
+.vs-step-body { font-size: 16px; color: var(--cream-deep); opacity: 0.82; line-height: 1.7; max-width: 480px; margin-bottom: 28px; }
+.vs-step-detail { display: flex; gap: 24px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--sage-pale); opacity: 0.65; padding-top: 20px; border-top: 1px solid rgba(159, 212, 194, 0.15); max-width: 460px; }
+.vs-certs { padding-top: 64px; border-top: 1px solid rgba(159, 212, 194, 0.15); display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+.vs-certs-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sage-pale); opacity: 0.7; }
+
+/* Specs grid */
+.vs-specs { margin: 100px 0 80px; padding-top: 60px; border-top: 1px solid rgba(159, 212, 194, 0.15); }
+.vs-specs-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-soft); margin-bottom: 36px; display: flex; align-items: center; gap: 14px; }
+.vs-specs-label::after { content: ''; flex: 1; height: 1px; background: rgba(216, 90, 48, 0.3); max-width: 120px; }
+.vs-specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(159, 212, 194, 0.15); }
+@media (max-width: 900px) { .vs-specs-grid { grid-template-columns: 1fr 1fr; } }
+.vs-spec { background: var(--sage-deep); padding: 32px 24px; }
+.vs-spec-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-pale); opacity: 0.6; margin-bottom: 14px; }
+.vs-spec-value { font-family: var(--serif); font-size: 38px; font-weight: 300; letter-spacing: -0.025em; color: var(--cream); line-height: 1; margin-bottom: 8px; }
+.vs-spec-value em { font-family: var(--mono); font-style: normal; font-size: 14px; letter-spacing: 0.05em; color: var(--terra-soft); margin-left: 4px; }
+.vs-spec-unit { font-size: 12px; color: var(--cream-deep); opacity: 0.7; line-height: 1.5; }
+
+/* What it measures */
+.vs-measures { margin-bottom: 80px; }
+.vs-measures-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; background: rgba(159, 212, 194, 0.1); margin-top: 36px; }
+@media (max-width: 900px) { .vs-measures-grid { grid-template-columns: 1fr; } }
+.vs-measure { background: var(--sage-deep); padding: 32px 28px; transition: background 0.25s; }
+.vs-measure:hover { background: #2F4540; }
+.vs-measure-title { font-family: var(--serif); font-size: 22px; font-weight: 400; font-style: italic; color: var(--terra-soft); margin-bottom: 14px; }
+.vs-measure-list { list-style: none; }
+.vs-measure-list li { font-size: 13.5px; color: var(--cream-deep); opacity: 0.78; padding: 8px 0; border-bottom: 1px solid rgba(159, 212, 194, 0.08); line-height: 1.55; display: flex; align-items: baseline; gap: 10px; }
+.vs-measure-list li:last-child { border-bottom: none; }
+.vs-measure-list li::before { content: ''; width: 4px; height: 4px; background: var(--terra-soft); border-radius: 50%; flex-shrink: 0; transform: translateY(-3px); }
+
+/* FAQ */
+.vs-faq { margin-bottom: 80px; }
+.vs-faq-title { font-family: var(--serif); font-weight: 300; font-size: var(--h3); line-height: 1.05; letter-spacing: -0.025em; color: var(--cream); margin-bottom: 36px; }
+.vs-faq-title em { font-style: italic; color: var(--terra-soft); }
+.vs-faq-list { border-top: 1px solid rgba(159, 212, 194, 0.15); }
+.vs-faq-item { border-bottom: 1px solid rgba(159, 212, 194, 0.15); }
+.vs-faq-q { width: 100%; background: transparent; border: none; padding: 24px 0; display: flex; justify-content: space-between; align-items: center; gap: 24px; cursor: pointer; font-family: var(--serif); font-size: 20px; font-weight: 400; color: var(--cream); text-align: left; line-height: 1.4; transition: color 0.2s; }
+.vs-faq-q:hover { color: var(--terra-soft); }
+.vs-faq-icon { width: 16px; height: 16px; position: relative; flex-shrink: 0; transition: transform 0.4s var(--ease-out); }
+.vs-faq-icon::before, .vs-faq-icon::after { content: ''; position: absolute; background: var(--terra-soft); transition: opacity 0.3s; }
+.vs-faq-icon::before { top: 50%; left: 0; right: 0; height: 1.5px; transform: translateY(-50%); }
+.vs-faq-icon::after { left: 50%; top: 0; bottom: 0; width: 1.5px; transform: translateX(-50%); }
+.vs-faq-item.open .vs-faq-icon { transform: rotate(135deg); }
+.vs-faq-a { max-height: 0; overflow: hidden; transition: max-height 0.5s var(--ease-out); }
+.vs-faq-item.open .vs-faq-a { max-height: 400px; }
+.vs-faq-a-inner { padding: 0 0 28px; font-size: 15px; line-height: 1.7; color: var(--cream-deep); opacity: 0.78; max-width: 720px; }
+.vs-faq-a-inner strong { color: var(--cream); font-weight: 500; }
+.vs-cert-list { display: flex; gap: 14px; flex-wrap: wrap; }
+.cert-badge { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-deep); border: 1px solid rgba(159, 212, 194, 0.2); padding: 9px 14px; display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.15); transition: border-color 0.2s; }
+.cert-badge:hover { border-color: var(--terracotta); }
+.cert-badge::before { content: ''; width: 6px; height: 6px; background: var(--terra-soft); border-radius: 50%; }
+
+/* App */
+.app-section { background: var(--cream); padding: 140px 0; position: relative; }
+.app-inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(48px, 7vw, 120px); align-items: center; }
+@media (max-width: 1000px) { .app-inner { grid-template-columns: 1fr; gap: 64px; } .app-content { order: 2; } }
+.app-eyebrow { font-family: var(--mono); font-size: var(--eyebrow); letter-spacing: 0.22em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 28px; }
+.app-headline { font-family: var(--serif); font-weight: 300; font-size: var(--h2); line-height: 1.05; letter-spacing: -0.025em; color: var(--sage-deep); margin-bottom: 28px; }
+.app-headline em { font-style: italic; color: var(--terracotta); }
+.app-body { font-size: 16px; color: var(--ink-soft); line-height: 1.75; max-width: 500px; margin-bottom: 16px; }
+.app-features { margin-top: 36px; border-top: 1px solid var(--rule-soft); }
+.app-feature { display: grid; grid-template-columns: 36px 1fr; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--rule-soft); align-items: baseline; }
+.af-num { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--terracotta); }
+.af-text { font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; }
+.af-text strong { color: var(--sage-deep); font-weight: 500; }
+.app-tabs { display: flex; gap: 10px; margin-top: 36px; flex-wrap: wrap; }
+.app-tab { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; padding: 11px 18px; background: transparent; border: 1px solid var(--rule); color: var(--sage-mid); cursor: pointer; transition: all 0.25s; }
+.app-tab:hover { border-color: var(--sage-deep); color: var(--sage-deep); }
+.app-tab.active { background: var(--sage-deep); border-color: var(--sage-deep); color: var(--cream); }
+.app-availability { margin-top: 36px; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); }
+
+/* Phone */
+.app-phone-wrap { display: flex; align-items: center; justify-content: center; position: relative; padding: 20px; }
+.app-phone-wrap::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, var(--sand-pale) 0%, transparent 65%); opacity: 0.55; z-index: 0; }
+.phone { width: 340px; height: 700px; background: #0F1612; border-radius: 52px; padding: 10px; position: relative; z-index: 1; box-shadow: 0 40px 100px rgba(42, 61, 53, 0.22), 0 16px 40px rgba(42, 61, 53, 0.14), inset 0 0 0 1.5px rgba(255, 255, 255, 0.05); }
+.phone::after { content: ''; position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 90px; height: 28px; background: #000; border-radius: 16px; z-index: 10; }
+.phone-screen { width: 100%; height: 100%; background: var(--cream); border-radius: 44px; overflow: hidden; position: relative; }
+.phone-screen-inner { position: absolute; inset: 0; padding: 60px 18px 24px; overflow-y: auto; overflow-x: hidden; opacity: 0; transform: translateX(10px); transition: opacity 0.4s var(--ease), transform 0.4s var(--ease); pointer-events: none; }
+.phone-screen-inner::-webkit-scrollbar { display: none; }
+.phone-screen-inner { scrollbar-width: none; }
+.phone-screen-inner.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+.ps-status { position: absolute; top: 22px; left: 24px; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--sage-deep); z-index: 5; }
+.ps-status-right { position: absolute; top: 22px; right: 24px; display: flex; align-items: center; gap: 5px; z-index: 5; }
+.ps-status-right svg { width: 14px; height: 14px; }
+.ps-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; padding: 0 4px; }
+.ps-title { font-family: var(--serif); font-size: 24px; font-style: italic; font-weight: 400; color: var(--sage-deep); line-height: 1; }
+.ps-postcode { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--sage-mid); }
+.ps-greeting { font-size: 12px; color: var(--sage-mid); margin-bottom: 14px; padding: 0 4px; }
+.ps-sphere-card { background: linear-gradient(135deg, rgba(91,123,111,0.10), rgba(216,90,48,0.05)); border-radius: 18px; padding: 16px; border: 0.5px solid rgba(91,123,111,0.15); display: flex; align-items: center; gap: 14px; margin-bottom: 14px; cursor: pointer; transition: transform 0.25s var(--ease); }
+.ps-sphere-card:active { transform: scale(0.98); }
+.ps-sphere-dot { width: 44px; height: 44px; background: var(--sage-deep); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
+.ps-sphere-dot::after { content: ''; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--sage-pale); animation: spherePulse 3s ease-in-out infinite; }
+@keyframes spherePulse { 0%,100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.15); opacity: 1; } }
+.ps-sphere-dot::before { content: ''; position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: #34D399; border-radius: 50%; border: 2.5px solid var(--cream); z-index: 1; animation: dotBlink 2s ease-in-out infinite; }
+@keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+.ps-sphere-info { flex: 1; }
+.ps-sphere-info-title { font-size: 14px; font-weight: 600; color: var(--sage-deep); }
+.ps-sphere-info-status { font-size: 11px; color: var(--sage-soft); margin-top: 3px; }
+.ps-sphere-day { text-align: right; }
+.ps-sphere-day-num { font-family: var(--serif); font-size: 24px; font-weight: 400; color: var(--sage-deep); font-style: italic; line-height: 1; }
+.ps-sphere-day-of { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.1em; color: var(--sage-mid); text-transform: uppercase; margin-top: 4px; }
+.ps-section-label { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); margin: 14px 4px 8px; display: flex; justify-content: space-between; align-items: center; }
+.ps-section-label .live-dot { width: 6px; height: 6px; background: var(--sage-soft); border-radius: 50%; animation: dotBlink 1.5s infinite; }
+.ps-bio-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin-bottom: 12px; }
+.ps-bio { background: #FFFFFF; border-radius: 14px; padding: 12px 10px; text-align: center; border: 0.5px solid var(--rule-soft); cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
+.ps-bio:hover { transform: translateY(-2px); border-color: var(--sage-soft); }
+.ps-bio-value { font-family: var(--serif); font-size: 19px; font-weight: 400; color: var(--sage-deep); margin-bottom: 4px; line-height: 1; }
+.ps-bio-label { font-size: 9.5px; color: var(--sage-mid); margin-bottom: 6px; }
+.ps-bio-pill { display: inline-block; font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; }
+.pill-good { color: var(--sage-soft); background: rgba(91,123,111,0.12); }
+.pill-mod { color: var(--sand); background: rgba(196,168,130,0.15); }
+.pill-high { color: var(--terracotta); background: rgba(216,90,48,0.12); }
+.ps-heat-card { background: var(--terra-pale); border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; border: 0.5px solid rgba(216, 90, 48, 0.15); position: relative; }
+.ps-heat-dismiss { position: absolute; top: 12px; right: 14px; width: 18px; height: 18px; border: none; background: rgba(216, 90, 48, 0.12); color: var(--terracotta); border-radius: 50%; font-size: 14px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; font-family: var(--sans); }
+.ps-heat-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.ps-heat-title { font-size: 12px; font-weight: 600; color: var(--terracotta); }
+.ps-heat-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--terracotta); animation: pulse 2s infinite; }
+.ps-heat-graph svg { width: 100%; height: 50px; display: block; }
+.ps-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 10px; }
+.ps-action { background: rgba(255, 255, 255, 0.6); border-radius: 10px; padding: 8px 10px; text-align: center; font-size: 10px; font-weight: 500; color: var(--terracotta); }
+.ps-ring-wrap { display: flex; flex-direction: column; align-items: center; padding: 14px 0; }
+.ps-ring-outer { position: relative; width: 160px; height: 160px; margin-bottom: 12px; }
+.ps-ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ps-ring-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ps-ring-num { font-family: var(--serif); font-size: 54px; font-weight: 400; color: var(--terracotta); line-height: 1; font-style: italic; }
+.ps-ring-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terracotta); margin-top: 6px; font-weight: 500; }
+.ps-tag-row { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.ps-tag { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 10px; border-radius: 14px; background: var(--cream-deep); color: var(--sage-mid); }
+.ps-tag.warn { background: var(--terra-pale); color: var(--terracotta); }
+.ps-breakdown { background: #FFFFFF; border-radius: 16px; border: 0.5px solid var(--rule-soft); padding: 16px; }
+.ps-breakdown-label { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); margin-bottom: 14px; }
+.ps-bd-row { display: flex; align-items: center; gap: 10px; margin-bottom: 11px; }
+.ps-bd-row:last-child { margin-bottom: 0; }
+.ps-bd-label-col { width: 94px; font-size: 11.5px; color: var(--ink-soft); }
+.ps-bd-bar { flex: 1; height: 6px; background: var(--cream-deep); border-radius: 3px; overflow: hidden; }
+.ps-bd-fill { height: 100%; border-radius: 3px; transition: width 1.2s var(--ease-out); }
+.ps-bd-pct { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--sage-deep); width: 34px; text-align: right; }
+.ps-targets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 14px; }
+.ps-target { background: #FFFFFF; border-radius: 14px; border: 0.5px solid var(--rule-soft); padding: 12px; cursor: pointer; transition: border-color 0.2s, transform 0.2s; }
+.ps-target:hover { border-color: var(--sage-soft); transform: translateY(-1px); }
+.ps-target.completed { background: rgba(91, 123, 111, 0.08); border-color: var(--sage-soft); }
+.ps-target-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.ps-target-check { width: 16px; height: 16px; border: 1.5px solid var(--rule); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.ps-target.completed .ps-target-check { background: var(--sage-soft); border-color: var(--sage-soft); }
+.ps-target.completed .ps-target-check::after { content: ''; width: 6px; height: 3px; border-left: 1.5px solid white; border-bottom: 1.5px solid white; transform: rotate(-45deg) translate(0, -1px); }
+.ps-target-label { font-size: 12px; color: var(--sage-deep); font-weight: 500; }
+.ps-target-target { font-size: 10px; color: var(--sage-mid); margin-bottom: 10px; }
+.ps-target-bar { height: 4px; background: var(--cream-deep); border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
+.ps-target-fill { height: 100%; background: var(--sage-deep); border-radius: 2px; transition: width 1s var(--ease-out); }
+.ps-target-pct { font-family: var(--mono); font-size: 9.5px; font-weight: 500; color: var(--sage-deep); }
+.ps-suggestion { background: #FFFFFF; border-radius: 14px; border: 0.5px solid var(--rule-soft); padding: 12px 14px; margin-bottom: 7px; }
+.ps-sug-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.ps-sug-title { font-size: 12px; font-weight: 500; color: var(--sage-deep); }
+.ps-sug-tag { font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; background: var(--cream-deep); color: var(--sage-mid); }
+.ps-sug-desc { font-size: 10.5px; color: var(--ink-mid); line-height: 1.5; }
+
+/* Testimonial */
+.testimonial-section { background: var(--cream-deep); padding: 140px 0; position: relative; overflow: hidden; }
+.testimonial-section::before { content: '"'; position: absolute; top: 40px; left: 5%; font-family: var(--serif); font-size: 520px; line-height: 0.8; color: var(--sand); opacity: 0.08; font-style: italic; pointer-events: none; }
+.testimonial-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 2; }
+
+/* Video */
+.t-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 64px;
+  background: var(--sage-deep);
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  box-shadow: 0 24px 64px rgba(42, 61, 53, 0.18), 0 8px 24px rgba(42, 61, 53, 0.1);
+}
+.t-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.t-video-caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  margin-bottom: 56px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sage-mid);
+}
+.t-video-caption .left { display: flex; align-items: center; gap: 12px; }
+.t-video-caption .left::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--terracotta); border-radius: 50%;
+}
+.t-video-divider {
+  text-align: center;
+  margin-bottom: 56px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sage-mid);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.t-video-divider::before, .t-video-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--rule-soft);
+}
+.t-eyebrow { font-family: var(--mono); font-size: var(--eyebrow); letter-spacing: 0.22em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 36px; text-align: center; }
+.t-quote { font-family: var(--serif); font-weight: 300; font-style: italic; font-size: clamp(26px, 3vw, 40px); line-height: 1.3; letter-spacing: -0.015em; color: var(--sage-deep); margin-bottom: 44px; text-align: center; }
+.t-quote em { color: var(--terracotta); font-style: italic; font-weight: 400; }
+.t-cite { display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 36px; border-top: 1px solid var(--rule-soft); margin: 0 auto; max-width: 480px; }
+.t-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--sand), var(--terracotta)); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--cream); }
+.t-cite-meta { display: flex; flex-direction: column; text-align: left; }
+.t-name { font-family: var(--serif); font-size: 19px; font-weight: 400; color: var(--sage-deep); }
+.t-detail { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); margin-top: 4px; }
+.t-row { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 88px; padding-top: 60px; border-top: 1px solid var(--rule-soft); }
+@media (max-width: 720px) { .t-row { grid-template-columns: 1fr; } }
+.t-mini-quote { font-family: var(--serif); font-size: 18px; font-style: italic; font-weight: 300; color: var(--ink-soft); line-height: 1.5; margin-bottom: 18px; }
+.t-mini-cite { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); }
+
+/* Light FAQ — sits after testimonials */
+.faq-section { background: var(--cream); padding: 120px 0; }
+.faq-inner { display: grid; grid-template-columns: 1fr 2fr; gap: clamp(48px, 7vw, 120px); max-width: 1280px; margin: 0 auto; align-items: start; }
+@media (max-width: 900px) { .faq-inner { grid-template-columns: 1fr; gap: 40px; } }
+.faq-intro h2 { font-family: var(--serif); font-weight: 300; font-size: var(--h3); line-height: 1.05; letter-spacing: -0.025em; color: var(--sage-deep); margin-bottom: 18px; }
+.faq-intro h2 em { font-style: italic; color: var(--terracotta); }
+.faq-intro p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.7; max-width: 360px; }
+.faq-list { border-top: 1px solid var(--rule-soft); }
+.faq-item { border-bottom: 1px solid var(--rule-soft); }
+.faq-q { width: 100%; background: transparent; border: none; padding: 26px 0; display: flex; justify-content: space-between; align-items: center; gap: 24px; cursor: pointer; font-family: var(--serif); font-size: clamp(18px, 1.6vw, 22px); font-weight: 400; color: var(--sage-deep); text-align: left; line-height: 1.4; transition: color 0.2s; }
+.faq-q:hover { color: var(--terracotta); }
+.faq-icon { width: 16px; height: 16px; position: relative; flex-shrink: 0; transition: transform 0.45s var(--ease-out); }
+.faq-icon::before, .faq-icon::after { content: ''; position: absolute; background: var(--terracotta); }
+.faq-icon::before { top: 50%; left: 0; right: 0; height: 1.5px; transform: translateY(-50%); }
+.faq-icon::after { left: 50%; top: 0; bottom: 0; width: 1.5px; transform: translateX(-50%); }
+.faq-item.open .faq-icon { transform: rotate(135deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.5s var(--ease-out); }
+.faq-item.open .faq-a { max-height: 400px; }
+.faq-a-inner { padding: 0 0 28px; font-size: 15px; line-height: 1.7; color: var(--ink-soft); max-width: 720px; }
+.faq-a-inner strong { color: var(--sage-deep); font-weight: 500; }
+.pricing { background: var(--cream); padding: 140px 0; }
+.pricing-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(48px, 7vw, 120px); align-items: start; }
+@media (max-width: 900px) { .pricing-inner { grid-template-columns: 1fr; gap: 56px; } }
+.pricing-left h2 { font-family: var(--serif); font-weight: 300; font-size: var(--h2); line-height: 1.05; letter-spacing: -0.025em; color: var(--sage-deep); margin-bottom: 24px; }
+.pricing-left h2 em { font-style: italic; color: var(--terracotta); }
+.pricing-left p { font-size: 15.5px; color: var(--ink-soft); line-height: 1.75; max-width: 460px; margin-bottom: 14px; }
+.pricing-meta { margin-top: 28px; font-size: 13.5px; color: var(--sage-mid); line-height: 1.7; max-width: 460px; }
+.subsidy-note { margin-top: 40px; padding: 28px 32px; background: var(--cream-deep); border: 1px solid var(--rule-soft); border-left: 3px solid var(--terracotta); }
+.subsidy-note p { font-size: 14px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 16px; }
+.subsidy-note p:last-of-type { margin-bottom: 0; }
+.subsidy-note strong { color: var(--sage-deep); font-weight: 500; }
+.subsidy-list { list-style: none; margin-top: 12px; }
+.subsidy-list li { font-size: 13px; color: var(--ink-soft); padding: 6px 0; display: flex; gap: 12px; align-items: baseline; }
+.subsidy-list li::before { content: '·'; color: var(--terracotta); font-weight: 700; }
+.pricing-cards { display: flex; flex-direction: column; gap: 16px; }
+.pricing-card { background: var(--cream); border: 1px solid var(--rule); padding: 40px; transition: all 0.35s var(--ease-out); position: relative; }
+.pricing-card:hover { transform: translateY(-4px); box-shadow: 0 14px 44px rgba(42, 61, 53, 0.08); border-color: var(--sage-deep); }
+.pricing-card.featured { background: var(--sage-deep); color: var(--cream); border-color: var(--sage-deep); }
+.pricing-card.featured:hover { box-shadow: 0 18px 52px rgba(42, 61, 53, 0.3); border-color: var(--terracotta); }
+.pc-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px; }
+.pc-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage-mid); font-weight: 500; }
+.pricing-card.featured .pc-label { color: var(--terra-soft); }
+.pc-price { font-family: var(--serif); font-weight: 300; font-size: 64px; letter-spacing: -0.035em; line-height: 1; margin-bottom: 10px; color: var(--sage-deep); }
+.pricing-card.featured .pc-price { color: var(--cream); }
+.pc-period { font-size: 13.5px; color: var(--sage-mid); margin-bottom: 28px; }
+.pricing-card.featured .pc-period { color: rgba(245, 240, 235, 0.5); }
+.pc-summary { font-size: 14px; color: var(--ink-soft); line-height: 1.65; padding-top: 24px; margin-bottom: 32px; border-top: 1px solid var(--rule-soft); }
+.pricing-card.featured .pc-summary { color: var(--cream-deep); border-top-color: rgba(159, 212, 194, 0.15); }
+.pc-cta { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 18px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; background: var(--sage-deep); color: var(--cream); position: relative; overflow: hidden; transition: transform 0.25s var(--ease); }
+.pc-cta::before { content: ''; position: absolute; inset: 0; background: var(--terracotta); transform: translateY(101%); transition: transform 0.4s var(--ease-out); }
+.pc-cta span { position: relative; z-index: 1; }
+.pc-cta:hover::before { transform: translateY(0); }
+.pricing-card.featured .pc-cta { background: var(--cream); color: var(--sage-deep); }
+
+/* Contact */
+.contact-section { background: var(--cream-deep); padding: 120px 0; }
+.contact-inner { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(48px, 7vw, 120px); align-items: start; max-width: 1280px; margin: 0 auto; }
+@media (max-width: 900px) { .contact-inner { grid-template-columns: 1fr; gap: 48px; } }
+.contact-left h2 { font-family: var(--serif); font-weight: 300; font-size: var(--h3); line-height: 1.1; letter-spacing: -0.025em; color: var(--sage-deep); margin-bottom: 20px; }
+.contact-left h2 em { font-style: italic; color: var(--terracotta); }
+.contact-left p { font-size: 15px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 14px; }
+.contact-email { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; padding: 14px 20px; background: var(--cream); border: 1px solid var(--rule-soft); font-family: var(--mono); font-size: 12px; color: var(--sage-deep); text-decoration: none; transition: all 0.25s; }
+.contact-email:hover { background: var(--sage-deep); color: var(--cream); border-color: var(--sage-deep); }
+.contact-form { display: flex; flex-direction: column; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+.form-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.form-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-mid); }
+.form-input, .form-select, .form-textarea { border: 1px solid var(--rule); background: var(--cream); padding: 14px 18px; font-family: var(--sans); font-size: 14px; color: var(--sage-deep); outline: none; transition: border-color 0.25s, box-shadow 0.25s; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--sage-deep); box-shadow: 0 0 0 3px rgba(42, 61, 53, 0.08); }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--sage-mid); opacity: 0.5; }
+.form-textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+.form-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%234A5D52' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+.form-submit { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; background: var(--sage-deep); color: var(--cream); border: none; padding: 18px 32px; cursor: pointer; align-self: flex-start; margin-top: 16px; position: relative; overflow: hidden; transition: transform 0.25s; }
+.form-submit::before { content: ''; position: absolute; inset: 0; background: var(--terracotta); transform: translateY(101%); transition: transform 0.4s var(--ease-out); }
+.form-submit span { position: relative; z-index: 1; }
+.form-submit:hover::before { transform: translateY(0); }
+.form-success { background: rgba(91, 123, 111, 0.1); border: 1px solid var(--sage-soft); padding: 16px 20px; color: var(--sage-soft); font-size: 13px; margin-top: 16px; display: none; }
+.form-success.visible { display: block; }
+
+/* Footer */
+footer { background: var(--sage-deep); padding: 80px 0 0; color: var(--cream-deep); }
+.footer-inner { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 56px; padding-bottom: 56px; border-bottom: 1px solid rgba(159, 212, 194, 0.12); }
+@media (max-width: 900px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 40px; } }
+.footer-logo { height: 28px; width: auto; margin-bottom: 24px; filter: brightness(0) invert(1); opacity: 0.95; }
+.footer-line { font-family: var(--serif); font-size: 15px; color: var(--cream); line-height: 1.55; font-weight: 300; opacity: 0.7; margin-top: 18px; max-width: 280px; }
+.footer-col-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--terra-soft); margin-bottom: 22px; font-weight: 500; }
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-links a { font-size: 14px; color: rgba(245, 240, 235, 0.6); text-decoration: none; transition: color 0.2s, padding 0.2s; }
+.footer-links a:hover { color: var(--cream); padding-left: 4px; }
+.footer-base { padding: 28px 0; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+.footer-base-left { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(245, 240, 235, 0.4); display: flex; gap: 24px; flex-wrap: wrap; }
+.footer-base-right { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(245, 240, 235, 0.4); }
+.ual-band { background: #1F2D27; padding: 14px var(--gutter); text-align: center; font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(159, 212, 194, 0.4); border-top: 1px solid rgba(159, 212, 194, 0.08); }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scroll-progress">
+  <div class="scroll-progress-bar" id="scroll-progress-bar"></div>
+</div>
+
+<a href="#pricing" class="floating-cta" id="floating-cta">
+  Begin your quarter
+  <span class="arrow"></span>
+</a>
+
+<section class="hero" id="hero">
+  <a href="#hero" class="top-logo" aria-label="Velaground">
+    <svg viewBox="0 0 273.26 53.79" xmlns="http://www.w3.org/2000/svg">
+      <defs><style>.cls-h1 { fill: #d85a30; } .cls-h2 { fill: #F5F0EB; }</style></defs>
+      <g>
+        <path class="cls-h2" d="M37.82,1.41c.9,0,1.35.38,1.35,1.13,0,.31-.11.62-.33.91-.04.04-.11.11-.22.21-.11.1-.27.23-.47.4-.31.26-.57.54-.77.85-.2.31-.38.65-.52,1.02l-1.79,6.31c-.64,2.3-1.42,4.68-2.32,7.15-.9,2.47-1.9,5.06-3,7.76-1.32,3.23-2.61,6.06-3.87,8.48-1.26,2.42-2.49,4.46-3.68,6.13-.53.75-.91,1.24-1.13,1.46-.31.31-.6.55-.85.72s-.51.25-.77.25c-.46,0-.85-.14-1.17-.43-.32-.29-.65-.67-.98-1.14-.83-1.16-1.64-2.43-2.43-3.8-.79-1.38-1.58-2.88-2.37-4.49-.72-1.4-1.39-2.82-2.03-4.27-.63-1.45-1.25-2.95-1.83-4.49-1.16-3.07-2.21-6.15-3.16-9.24-.95-3.09-1.79-6.23-2.52-9.43-.31-1.42-1.05-2.47-2.21-3.17-.5-.26-.74-.65-.74-1.19,0-.31.14-.58.41-.8.28-.22.74-.33,1.41-.33h8.05c.53,0,.84.02.91.06.57.17.85.56.85,1.19,0,.22-.09.44-.28.66-.18.22-.49.43-.91.63-.42.2-.74.37-.96.5-.22.13-.35.21-.39.25-.26.2-.46.48-.59.83-.14.35-.21.76-.21,1.24,0,.83.16,1.93.47,3.31s.76,3.04,1.35,4.99c.72,2.28,1.45,4.42,2.19,6.42.74,2,1.53,3.94,2.34,5.82.82,1.87,1.69,3.7,2.6,5.49s1.92,3.59,3,5.43c.68-1.05,1.35-2.16,2-3.35.65-1.19,1.27-2.44,1.86-3.76.92-2.06,1.95-4.61,3.09-7.66.59-1.56,1.13-3.04,1.63-4.42.5-1.39.96-2.72,1.38-4.01,1.34-4.19,2.01-7.03,2.01-8.52,0-1.01-.62-1.8-1.85-2.37-1.21-.57-1.82-1.09-1.82-1.57s.14-.76.43-.91c.28-.15.69-.22,1.23-.22h7.61Z"/>
+        <path class="cls-h2" d="M41.62,32.92c.22,1.14.61,2.17,1.16,3.09.55.92,1.24,1.7,2.07,2.34.83.64,1.76,1.14,2.8,1.49,1.04.35,2.15.52,3.35.52,2.04,0,3.85-.49,5.43-1.46.7-.53,1.41-1.08,2.14-1.64s1.45-1.11,2.16-1.64c.26,0,.5.09.73.28.23.18.34.43.34.74,0,.68-.44,1.49-1.32,2.43-.33.37-.68.72-1.05,1.05-.37.33-.76.62-1.19.88-1.27.88-2.57,1.53-3.9,1.96-1.33.42-2.74.63-4.23.63-3.8,0-6.97-1.2-9.48-3.61-2.57-2.43-3.86-5.51-3.86-9.26,0-2.11.37-4.05,1.1-5.82.73-1.76,1.82-3.38,3.25-4.85,2.87-2.94,6.4-4.41,10.61-4.41,2.32,0,4.24.49,5.76,1.46,1.03.64,1.87,1.47,2.52,2.48.65,1.01.98,2.09.98,3.23,0,1.87-.7,3.51-2.1,4.91-1.16,1.16-2.72,2.1-4.69,2.84-.77.31-1.63.58-2.58.81-.95.23-1.97.45-3.07.65-.64.11-1.45.23-2.43.37-.97.14-2.1.28-3.39.43l-1.13.11ZM56.48,22.69c0-.72-.12-1.34-.37-1.87-.25-.53-.59-.98-1.03-1.34s-.97-.63-1.58-.81c-.62-.18-1.29-.28-2.03-.28-3.24,0-5.8,1.22-7.69,3.67-1.65,2.24-2.48,5.05-2.48,8.44,2.08-.2,3.89-.45,5.43-.73,1.54-.28,2.86-.61,3.94-.98,3.88-1.29,5.82-3.32,5.82-6.09Z"/>
+        <path class="cls-h2" d="M66.65,6.04c0-.64-.17-1.11-.52-1.41-.15-.18-.34-.34-.58-.47-.24-.13-.52-.24-.83-.33-.64-.22-.96-.52-.96-.91,0-.13.05-.25.14-.37.09-.12.2-.23.32-.34s.24-.21.37-.29c.13-.08.23-.14.3-.18.42-.2.83-.4,1.23-.58.4-.18.78-.35,1.14-.5,1.12-.44,1.93-.66,2.43-.66.57,0,.91.18,1.02.55.11.37.17.94.17,1.71v34.71c0,.42.03.84.1,1.24.06.4.17.76.32,1.08.15.31.37.54.66.69l.63.33c.44.22.68.35.72.39.18.18.28.45.28.8,0,.53-.09.87-.28,1.02-.18.15-.6.22-1.24.22h-6.53c-.57,0-.97-.07-1.2-.22-.23-.15-.34-.49-.34-1.02,0-.44.32-.84.96-1.19l1.02-.5c.26-.2.45-.55.57-1.05.12-.5.18-.98.18-1.46-.04-.39-.06-.71-.06-.96V6.04Z"/>
+        <path class="cls-h2" d="M98.23,35.78c-.04.51-.05,1.02-.03,1.5.02.49.07.92.15,1.31.08.39.19.7.32.95.13.25.29.39.5.43.24.11.49.21.76.29.27.08.51.17.73.28.22.1.39.23.51.37.12.15.15.34.1.58,0,.53-.22.87-.65,1.02-.43.15-.97.22-1.61.22h-2.48c-.44,0-.8-.04-1.08-.11-.28-.07-.49-.19-.65-.36s-.26-.39-.3-.66c-.05-.28-.07-.62-.07-1.02v-2.32c-2.26,3.55-5.4,5.32-9.43,5.32-1.32,0-2.54-.17-3.65-.51-1.11-.34-2.11-.83-2.99-1.48-1.97-1.45-2.95-3.48-2.95-6.09-.02-1.12.17-2.17.57-3.14.4-.97.94-1.86,1.64-2.65.7-.79,1.53-1.49,2.5-2.11.96-.62,2.01-1.13,3.13-1.54s2.3-.71,3.54-.9c1.24-.18,2.48-.26,3.71-.22l3.45.17c0-1.98-.79-3.6-2.37-4.85-.77-.64-1.62-1.13-2.54-1.45-.92-.32-1.9-.48-2.95-.48-.55,0-1.03.02-1.43.07-.4.05-.79.13-1.14.25s-.73.28-1.1.48c-.38.2-.82.45-1.34.74-.42.26-.84.5-1.24.72-.4.22-.84.33-1.3.33-1.07,0-1.6-.47-1.6-1.41,0-.26.07-.5.21-.73.14-.23.34-.47.59-.73.15-.15.34-.29.59-.44s.54-.32.87-.52c2.11-.97,4.41-1.46,6.89-1.46,1.56,0,3.08.21,4.56.63,1.48.42,2.84,1.13,4.09,2.12,1.25.94,2.15,2.1,2.69,3.49.54,1.39.81,2.99.81,4.81v9.1ZM91.44,27.49c-1.49,0-2.85.14-4.09.41-1.24.28-2.38.68-3.43,1.21-2.67,1.45-4,3.49-4,6.12,0,1.54.49,2.75,1.46,3.61,1.16,1.05,2.52,1.57,4.08,1.57,2.44,0,4.55-.72,6.31-2.15.44-.39.8-.78,1.09-1.19.28-.4.51-.85.68-1.32.17-.48.28-1.01.34-1.59s.1-1.23.1-1.94v-4.58l-2.54-.17Z"/>
+      </g>
+      <g>
+        <path class="cls-h1" d="M122.16,38.54c.83.22,1.57.53,2.22.94.65.4,1.21.88,1.67,1.43.46.55.81,1.17,1.06,1.85.25.68.37,1.41.37,2.18,0,2.65-1.31,4.78-3.92,6.4-2.63,1.64-6.09,2.45-10.39,2.45-3.22,0-5.83-.4-7.83-1.21-1.97-.81-2.95-1.83-2.95-3.06,0-1.05.4-2.08,1.19-3.09.81-1.03,1.62-1.54,2.43-1.54.53,0,.8.26.8.77,0,.22-.07.57-.22,1.05-.15.48-.22.81-.22.99,0,1.76,2.43,2.65,7.28,2.65,3.05,0,5.39-.48,7.03-1.45,1.64-.96,2.45-2.36,2.45-4.18,0-.55-.09-1.04-.26-1.46-.17-.42-.46-.8-.87-1.14-.4-.34-.93-.65-1.57-.92-.64-.28-1.43-.53-2.37-.77-.83.17-1.53.28-2.11.34-.58.06-1.08.1-1.5.1-2.92,0-5.22-.89-6.89-2.67-1.65-1.78-2.48-4.24-2.48-7.36,0-1.93.34-3.76,1.01-5.5s1.67-3.35,2.99-4.84c2.65-2.98,5.79-4.47,9.43-4.47.29,0,.72.02,1.27.06.55.04,1.24.09,2.07.17s1.58.12,2.25.15c.67.03,1.27.04,1.81.04h.69c.31,0,.68,0,1.1-.03.42-.02.81-.03,1.16-.03h.96c1.34,0,2.01.49,2.01,1.46,0,.68-.2,1.16-.59,1.43-.4.28-1.1.41-2.11.41-.2,0-.49,0-.85-.01s-.84-.02-1.41-.04c-.2-.02-.38-.03-.52-.03s-.28,0-.39-.03c.99.88,1.74,1.95,2.25,3.21.51,1.26.76,2.66.76,4.2,0,2.33-.57,4.48-1.72,6.45-1.15,1.97-2.83,3.67-5.06,5.1ZM118.55,18.44c-2.43,0-4.51,1.2-6.26,3.61-1.73,2.39-2.59,5.31-2.59,8.77,0,2.33.51,4.13,1.54,5.39,1.03,1.26,2.49,1.89,4.38,1.89,2.39,0,4.44-1.21,6.15-3.64,1.73-2.44,2.59-5.39,2.59-8.85,0-2.28-.51-4.04-1.53-5.29s-2.45-1.88-4.29-1.88Z"/>
+        <path class="cls-h1" d="M134.95,31.15c.44-2.19.76-3.9.95-5.14.19-1.24.29-2.15.29-2.72,0-.66-.09-1.16-.28-1.49-.18-.33-.53-.64-1.05-.94-.07-.04-.16-.08-.25-.14-.09-.06-.21-.12-.36-.19-.86-.48-1.3-.93-1.3-1.35,0-.51.62-1.16,1.85-1.93,1.23-.79,2.39-1.19,3.47-1.19.77,0,1.33.29,1.67.88.34.59.51,1.52.51,2.78,0,.24-.03.81-.08,1.71-.04.46-.06.86-.08,1.21-.02.35-.04.65-.06.91,1.1-2.43,2.39-4.25,3.87-5.49,1.48-1.23,3.11-1.85,4.89-1.85.99,0,1.64.17,1.93.52.33.37.5,1.16.5,2.37,0,.83-.16,1.47-.48,1.92-.32.45-.79.68-1.39.68-.24,0-.67-.14-1.3-.41-.59-.29-1.09-.44-1.52-.44-1.67,0-3.18,1.16-4.54,3.47-1.35,2.32-2.44,5.62-3.27,9.92l-1.3,6.78c0,.06,0,.11-.03.17-.18,1.01-.55,1.52-1.1,1.52h-2.59c-.4,0-.68-.06-.81-.19-.14-.13-.21-.37-.21-.72,0-.13,0-.24.01-.33,0-.09.02-.18.04-.28l1.99-10.06Z"/>
+        <path class="cls-h1" d="M150.11,32.17c0-1.93.39-3.89,1.16-5.87.75-1.99,1.8-3.71,3.14-5.18,3.09-3.47,7-5.21,11.74-5.21,3.6,0,6.46,1.03,8.57,3.09,2.11,2.04,3.17,4.8,3.17,8.27,0,2.17-.4,4.24-1.19,6.2-.79,1.97-1.96,3.78-3.5,5.43-1.45,1.56-3.12,2.74-5,3.54-1.88.8-3.97,1.2-6.24,1.2-3.75,0-6.66-1-8.74-3-2.08-2.02-3.12-4.84-3.12-8.46ZM155.1,32.06c0,2.79.63,4.95,1.9,6.46,1.27,1.52,3.06,2.27,5.38,2.27,3,0,5.5-1.3,7.53-3.89,2.02-2.61,3.03-5.86,3.03-9.76,0-2.57-.63-4.6-1.9-6.09-1.27-1.51-2.99-2.26-5.16-2.26-1.67,0-3.15.35-4.42,1.06-1.28.71-2.48,1.83-3.6,3.38-.88,1.23-1.56,2.62-2.04,4.16-.48,1.54-.72,3.1-.72,4.66Z"/>
+        <path class="cls-h1" d="M199.19,35.51c-1.21,2.5-2.71,4.39-4.48,5.68-1.77,1.29-3.8,1.93-6.08,1.93s-4.15-.66-5.49-1.98c-1.34-1.32-2.01-3.12-2.01-5.4,0-.39.05-.96.14-1.72.09-.76.24-1.7.44-2.8l1.24-7.53c.11-.72.18-1.21.22-1.49s.06-.51.06-.69c0-.74-.4-1.2-1.21-1.41h-.03s-.07-.03-.11-.03-.07,0-.11-.03c-.64-.15-.96-.45-.96-.91,0-.62.61-1.29,1.82-1.98,1.19-.68,2.45-1.02,3.78-1.02,1.05,0,1.57.68,1.57,2.04,0,.46-.14,1.47-.41,3.03-.02.13-.04.24-.06.33-.02.09-.04.18-.06.28l-1.74,11.11c-.07.4-.13.79-.17,1.16-.04.37-.06.74-.06,1.1,0,1.56.35,2.76,1.06,3.6.71.84,1.72,1.25,3.05,1.25,2.55,0,4.71-1.35,6.46-4.04,1.75-2.69,3.21-6.88,4.37-12.56l1.13-5.82c.09-.4.21-.68.36-.81s.45-.21.91-.21h2.59c.24,0,.44.07.59.22.16.15.23.33.23.55,0,.04,0,.09-.01.17,0,.07-.02.16-.04.25-.02.04-.03.07-.03.11s0,.07-.03.11l-1.63,8.63c-.48,2.63-.81,4.59-.99,5.87-.17,1.31-.25,2.38-.25,3.23,0,.57.05,1.06.15,1.48.1.41.23.69.4.84.11.09.27.18.47.28.2.09.45.2.74.33.59.22.88.49.88.8,0,.5-.32.96-.96,1.41-.88.66-1.74,1.19-2.56,1.57-.83.39-1.45.58-1.87.58-.57,0-.98-.24-1.23-.73-.25-.49-.37-1.29-.37-2.41,0-.53.02-1.17.07-1.92.05-.74.11-1.56.21-2.44Z"/>
+        <path class="cls-h1" d="M216.27,23.87c1.21-2.54,2.71-4.45,4.49-5.75,1.78-1.3,3.8-1.94,6.06-1.94s4.13.66,5.49,1.98c1.34,1.32,2.01,3.13,2.01,5.43,0,.48-.04,1.11-.12,1.89-.08.78-.21,1.65-.37,2.61l-1.24,7.5c-.06.39-.1.7-.14.94-.04.24-.06.44-.08.59-.02.16-.03.29-.04.39,0,.1-.01.21-.01.32,0,.74.4,1.2,1.21,1.41h.03s.07.03.11.03.07,0,.11.03c.61.13.93.43.96.91,0,.64-.63,1.31-1.9,1.98-1.27.66-2.59.99-3.97.99-.99,0-1.49-.54-1.49-1.63,0-.17,0-.3.01-.4s.02-.19.04-.26l2.37-14.47c.07-.5.13-.94.18-1.34.05-.4.07-.7.07-.92,0-1.56-.36-2.76-1.08-3.6s-1.74-1.25-3.06-1.25-2.44.33-3.5.99-2.04,1.67-2.94,3.03c-.89,1.36-1.7,3.08-2.43,5.17-.73,2.09-1.38,4.55-1.97,7.4l-1.19,5.82c-.07.42-.18.7-.33.83-.15.13-.43.19-.85.19h-2.59c-.26,0-.46-.07-.62-.22-.16-.15-.23-.34-.23-.58,0-.11,0-.22.01-.32,0-.1.02-.2.04-.29l1.63-8.66c.57-2.98.93-5.04,1.08-6.2.17-1.16.25-2.11.25-2.87-.02-.59-.08-1.09-.18-1.5-.1-.41-.23-.68-.4-.81-.22-.18-.63-.39-1.24-.61-.57-.22-.85-.49-.85-.8,0-.24.08-.48.25-.72.17-.24.39-.46.66-.66.94-.66,1.77-1.17,2.5-1.53.73-.36,1.29-.54,1.7-.54,1.27,0,1.9.94,1.9,2.81,0,.13-.01.35-.04.68-.03.32-.06.75-.1,1.28-.04.53-.07,1.02-.1,1.46-.03.44-.06.85-.1,1.21Z"/>
+        <path class="cls-h1" d="M258.31,36.06c-1.23,2.48-2.74,4.36-4.54,5.62-1.79,1.27-3.82,1.9-6.08,1.9-3.11,0-5.61-.99-7.5-2.98-1.89-1.97-2.84-4.57-2.84-7.8,0-2.22.5-4.43,1.49-6.62,1.01-2.19,2.42-4.13,4.22-5.82,3.03-2.87,6.38-4.3,10.04-4.3,1.67,0,3.07.34,4.2,1.01s2.08,1.7,2.85,3.07l1.49-9.35c.11-.7.2-1.35.28-1.94.07-.6.11-1.05.11-1.36,0-.44-.05-.74-.15-.91-.1-.17-.37-.31-.81-.44-.07-.02-.25-.07-.52-.17-.81-.26-1.21-.63-1.21-1.13,0-.39.11-.72.33-1.01.22-.28.65-.59,1.3-.92.77-.4,1.42-.73,1.93-.99.51-.26.91-.43,1.19-.52.55-.22,1-.33,1.35-.33.48,0,.82.13,1.03.4.21.27.32.69.32,1.28,0,1.25-.19,3.12-.58,5.6-.04.31-.07.59-.11.84-.04.25-.07.46-.11.65l-3.94,25.61c-.11.66-.17,1.24-.17,1.74s.09.85.26,1.1.46.46.87.61c.22.07.46.13.72.17.88.2,1.32.6,1.32,1.19,0,.5-.5,1-1.49,1.52-.88.48-1.76.86-2.62,1.16-.86.29-1.55.44-2.07.44-.86,0-1.3-.7-1.3-2.1,0-.57.06-1.29.19-2.15s.31-1.88.55-3.06ZM252.93,19.19c-2.78,0-5.26,1.31-7.44,3.94-2.15,2.63-3.23,5.7-3.23,9.21,0,2.41.58,4.33,1.74,5.76,1.16,1.43,2.69,2.15,4.6,2.15,1.62,0,3.04-.43,4.26-1.3,1.22-.86,2.34-2.24,3.35-4.14.72-1.34,1.3-2.89,1.74-4.66.46-1.73.69-3.35.69-4.88,0-1.89-.51-3.38-1.52-4.47-1.01-1.08-2.41-1.63-4.19-1.63Z"/>
+      </g>
+      <path class="cls-h2" d="M267.61,40.99c0-1.05.29-1.94.88-2.67.57-.72,1.3-1.08,2.18-1.08.7,0,1.31.26,1.82.77.51.5.77,1.07.77,1.71,0,1.16-.29,2.1-.87,2.83-.58.73-1.31,1.09-2.19,1.09-.74,0-1.35-.25-1.85-.74s-.74-1.13-.74-1.9Z"/>
+    </svg>
+  </a>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow"><span class="dot"></span>Available in all 32 boroughs of London</p>
+    <h1 class="hero-headline">A quarterly subscription kit that helps your body manage <em>what your environment is exposing it to.</em></h1>
+    <p class="hero-body">Pollution affects hormonal health. Velaground sends you five items every quarter, each one calibrated to the specific pollutants your postcode is exposed to.</p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary"><span>Begin your first quarter</span></a>
+      <a href="#products" class="btn-secondary">See what's inside</a>
+    </div>
+  </div>
+
+  <div class="hero-image">
+    <img src="images/Hero_Box.jpg" alt="Velaground · The quarterly box" class="hero-photo">
+  </div>
+
+  <div class="hero-cue">
+    <span class="line"></span>
+    <span>Scroll to explore</span>
+  </div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Data Integrity Kitemark · Tier A</span>
+    <span>Women's Health Hub, NHS</span>
+    <span>European Health Futures Forum</span>
+    <span>EHPA certified</span>
+    <span>Postcode-specific calibration</span>
+    <span>Data Integrity Kitemark · Tier A</span>
+    <span>Women's Health Hub, NHS</span>
+    <span>European Health Futures Forum</span>
+    <span>EHPA certified</span>
+    <span>Postcode-specific calibration</span>
+  </div>
+</div>
+
+<section class="positioning" id="what">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">01 / What it is</span>
+      <span class="section-meta">A Vela service</span>
+    </div>
+    <div class="positioning-grid">
+      <div class="positioning-left reveal">
+        <h2>Five items per quarter. <em>Each one chosen for your postcode.</em></h2>
+        <p>Velaground is a quarterly subscription for women in high-contamination postcodes. Each box contains five items calibrated to what your area is exposing you to that season, and what your body needs to manage those effects.</p>
+        <div class="trust-row">
+          <div class="trust-item"><span class="trust-dot"></span>Data Integrity Kitemark</div>
+          <div class="trust-item"><span class="trust-dot"></span>EHPA certified</div>
+          <div class="trust-item"><span class="trust-dot"></span>European Health Futures Forum</div>
+          <div class="trust-item"><span class="trust-dot"></span>Women's Health Hub, NHS</div>
+        </div>
+      </div>
+      <div class="positioning-right reveal" data-delay="1">
+        <div class="what-grid">
+          <div>
+            <div class="what-col-label">Yes</div>
+            <ul class="what-list">
+              <li>Tracks the pollutants your postcode is exposed to, every quarter.</li>
+              <li>Sends five items calibrated to your exposure and your body's markers.</li>
+              <li>Monitors your hormonal health continuously via the Velasphere.</li>
+              <li>Gives you plain, actionable information about your own data.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="what-col-label no">No</div>
+            <ul class="what-list">
+              <li>Not a medical service or prescription product.</li>
+              <li>Not a replacement for GP care.</li>
+              <li>Not a wellness brand or supplement shop.</li>
+              <li>Not a campaign or community programme.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="postcode-section" id="postcode">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">02 / Your area</span>
+      <span class="section-meta">Live exposure data</span>
+    </div>
+    <div class="postcode-intro">
+      <h2 class="reveal">See what pollutants your postcode is <em>exposed to.</em></h2>
+      <p class="reveal" data-delay="1">Pollution levels vary significantly between postcodes. Enter yours to see the current exposure profile for your area. This is the same data that determines what goes into your box each quarter.</p>
+    </div>
+    <div class="postcode-form reveal" data-delay="2">
+      <input type="text" class="postcode-input" id="postcode-input" placeholder="SE1, E14, EC2..." maxlength="8" autocomplete="postal-code">
+      <button class="postcode-submit" id="postcode-submit">Check my postcode</button>
+    </div>
+    <div class="exposure-result" id="exposure-result">
+      <div class="er-inner">
+        <div class="result-header">
+          <span class="result-postcode"><span id="result-postcode-label">—</span><em>Autumn 2032</em></span>
+          <span class="result-quarter">Q3 · Updated weekly</span>
+        </div>
+        <div class="exposure-grid">
+          <div class="exposure-marker">
+            <div class="em-label">Air particulates</div>
+            <div class="em-value"><span id="em-air">—</span></div>
+            <div class="em-unit">µg/m³ PM2.5 <span class="level" id="em-air-level">—</span></div>
+            <div class="em-bar"><div class="em-bar-fill" id="bar-air"></div></div>
+          </div>
+          <div class="exposure-marker">
+            <div class="em-label">Water quality</div>
+            <div class="em-value"><span id="em-water">—</span></div>
+            <div class="em-unit">/ 100 index <span class="level" id="em-water-level">—</span></div>
+            <div class="em-bar"><div class="em-bar-fill" id="bar-water"></div></div>
+          </div>
+          <div class="exposure-marker">
+            <div class="em-label">Heat retention</div>
+            <div class="em-value"><span id="em-heat">—</span></div>
+            <div class="em-unit">UHI score <span class="level" id="em-heat-level">—</span></div>
+            <div class="em-bar"><div class="em-bar-fill" id="bar-heat"></div></div>
+          </div>
+          <div class="exposure-marker">
+            <div class="em-label">Construction dust</div>
+            <div class="em-value"><span id="em-dust">—</span></div>
+            <div class="em-unit"><span class="level" id="em-dust-level">—</span></div>
+            <div class="em-bar"><div class="em-bar-fill" id="bar-dust"></div></div>
+          </div>
+        </div>
+        <p class="result-note" id="result-note">—</p>
+        <div class="result-actions">
+          <button class="result-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">See your quarterly box →</button>
+          <span class="mono">Source: Velasphere network · DEFRA · TfL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="products" id="products">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">03 / What's in the box</span>
+      <span class="section-meta">Five items · every quarter</span>
+    </div>
+    <div class="products-intro reveal">
+      <h2>Five items. <em>Each one addresses a specific effect</em> of pollution on your body.</h2>
+      <p>Every item is chosen for your postcode. Each one works on its own. Together they cover the full picture of what your environment is doing to your hormonal health this quarter.</p>
+      <p class="mono" style="margin-top: 28px; color: var(--terracotta);">Tap any item to expand →</p>
+    </div>
+
+    <div class="product-item reveal">
+      <button class="product-header" onclick="toggleProduct(this)">
+        <span class="ph-num">Item 01</span>
+        <span class="ph-name">The Ground Report</span>
+        <span class="ph-type">Two-sided card · updated each quarter</span>
+        <span class="product-toggle"></span>
+      </button>
+      <div class="product-body">
+        <div class="product-body-inner">
+          <div class="product-image-wrap">
+            <img src="images/ground_report_both_sides.jpg" alt="The Ground Report, both sides" loading="lazy">
+          </div>
+          <div class="product-content">
+            <p class="product-desc"><strong>Side A: Pollution Profile.</strong> What your postcode is carrying this quarter. Air particulates, water quality, river proximity, heat retention. Drawn from Velasphere data aggregated across your area, alongside public monitoring.</p>
+            <p class="product-desc"><strong>Side B: Nutrition Guide.</strong> Four to five dietary adjustments calibrated to your exposure profile. Based on postcode data, not medical advice.</p>
+            <div class="product-detail">Small and consistent is enough.</div>
+            <div class="product-tags">
+              <span class="tag">Postcode-specific</span>
+              <span class="tag">Pollution + Nutrition</span>
+              <span class="tag">Two-sided</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-item reveal">
+      <button class="product-header" onclick="toggleProduct(this)">
+        <span class="ph-num">Item 02</span>
+        <span class="ph-name">Urban Resilience Formula</span>
+        <span class="ph-type">Supplement discs · 90 per quarter · one daily</span>
+        <span class="product-toggle"></span>
+      </button>
+      <div class="product-body">
+        <div class="product-body-inner">
+          <div class="product-image-wrap">
+            <div class="ph">
+              <svg class="ph-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4" stroke-dasharray="1.5 1.5"/></svg>
+              <span>[IMG: resilience_formula_sleeve]<br>Discs in sleeve · 45°<br>postcode visible on label</span>
+            </div>
+          </div>
+          <div class="product-content">
+            <p class="product-desc">Small circular dissolvable films. The blend is calibrated to your postcode's exposure profile. Ingredients listed on the sleeve alongside your postcode and quarter. Place on tongue, drop into water, or press into food. Dissolves in seconds.</p>
+            <div class="product-detail">Certified by the Environmental Health Products Authority (EHPA), est. 2031.</div>
+            <div class="product-tags">
+              <span class="tag">90 discs</span>
+              <span class="tag">EHPA certified</span>
+              <span class="tag">Postcode-tuned blend</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-item reveal">
+      <button class="product-header" onclick="toggleProduct(this)">
+        <span class="ph-num">Item 03</span>
+        <span class="ph-name">Ground Strips</span>
+        <span class="ph-type">Dissolving tongue films · 12 per quarter · immediate relief</span>
+        <span class="product-toggle"></span>
+      </button>
+      <div class="product-body">
+        <div class="product-body-inner">
+          <div class="product-image-wrap">
+            <img src="images/ground_strips_drawer.jpg" alt="Ground Strips · Clear, Wave, Ground variants" loading="lazy">
+          </div>
+          <div class="product-content">
+            <p class="product-desc">12 translucent dissolving tongue films per quarter. Three variants, each targeting a specific symptom. Place on tongue. Effects begin within minutes.</p>
+            <div class="variant-row">
+              <div class="variant">
+                <div class="variant-name">Wave</div>
+                <div class="variant-desc">For hot flashes</div>
+              </div>
+              <div class="variant">
+                <div class="variant-name">Ground</div>
+                <div class="variant-desc">For overstimulation and noise sensitivity</div>
+              </div>
+              <div class="variant">
+                <div class="variant-name">Clear</div>
+                <div class="variant-desc">For brain fog</div>
+              </div>
+            </div>
+            <div class="product-detail">Place on tongue. Let it dissolve. Carry on.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-item reveal">
+      <button class="product-header" onclick="toggleProduct(this)">
+        <span class="ph-num">Item 04</span>
+        <span class="ph-name">The Weekly</span>
+        <span class="ph-type">Box lid · 13 lines · one per week</span>
+        <span class="product-toggle"></span>
+      </button>
+      <div class="product-body">
+        <div class="product-body-inner">
+          <div class="product-image-wrap">
+            <img src="images/the_weekly_lid.jpg" alt="The Weekly · 13 ruled lines on the box lid" loading="lazy">
+          </div>
+          <div class="product-content">
+            <p class="product-desc">The box itself. Four magnets hold the lid during shipping. Once the flaps are torn away, the lid becomes a single sheet with 13 ruled lines, one per week of the quarter.</p>
+            <div class="product-detail">Once a week, write one sentence. At the end of thirteen weeks, look back. You might notice something.</div>
+            <div class="product-tags">
+              <span class="tag">The box stays</span>
+              <span class="tag">13 weeks</span>
+              <span class="tag">13 lines</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-item reveal">
+      <button class="product-header" onclick="toggleProduct(this)">
+        <span class="ph-num">Item 05</span>
+        <span class="ph-name">Velasphere</span>
+        <span class="ph-type">Bioresorbable microsphere · 90-day cycle</span>
+        <span class="product-toggle"></span>
+      </button>
+      <div class="product-body">
+        <div class="product-body-inner">
+          <div class="product-image-wrap">
+            <img src="images/vela_sphere_finger.jpg" alt="Velasphere · 8mm bioresorbable microsphere" loading="lazy">
+          </div>
+          <div class="product-content">
+            <p class="product-desc">An 8mm bioresorbable silver microsphere. Press onto the inner wrist and hold for 30 seconds. It migrates into the superficial venous network and reads your hormones, pollutant exposure, and environmental markers continuously for 90 days.</p>
+            <p class="product-desc">Leaves a faint silver tint along the veins. Dissolves at end of cycle, or on demand through the app.</p>
+            <div class="product-tags">
+              <span class="tag">90-day cycle</span>
+              <span class="tag">App-connected</span>
+              <span class="tag">Women's Health Hub, NHS</span>
+            </div>
+            <p class="mono" style="margin-top: 28px; color: var(--terracotta);">↓ See how it works</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="velasphere-section" id="velasphere">
+  <div class="container">
+    <div class="vs-intro reveal">
+      <div class="vs-eyebrow">04 / Velasphere · Deep dive</div>
+      <h2 class="vs-headline">Pressed once. Reads for 90 days. <em>Dissolves completely.</em></h2>
+      <p class="vs-body">The Velasphere sits in the superficial venous network of the inner wrist and reads your hormonal and environmental markers continuously for one quarter. No charging. No removal. No daily decision.</p>
+    </div>
+
+    <div class="vs-scroll-wrap">
+      <div class="vs-sequence">
+
+        <div class="vs-row reveal">
+          <div class="vs-row-image">
+            <img src="images/velasphere_press.jpg" alt="Velasphere being pressed onto the inner wrist" loading="lazy">
+            <div class="vs-row-stage-num">Stage 01 · 30 seconds</div>
+          </div>
+          <div class="vs-row-text">
+            <div class="vs-step-num">01 · The press</div>
+            <h3 class="vs-step-title">Hold for <em>thirty seconds.</em></h3>
+            <p class="vs-step-body">Place the 8mm sphere against the inner wrist and apply gentle pressure. It is painless. There is no needle, no incision, no skin damage.</p>
+            <div class="vs-step-detail">
+              <span>Once per quarter</span>
+              <span>No equipment</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vs-row reveal">
+          <div class="vs-row-image">
+            <img src="images/velasphere_absorb.jpg" alt="Velasphere mid-absorption into the wrist surface" loading="lazy">
+            <div class="vs-row-stage-num">Stage 02 · Migration</div>
+          </div>
+          <div class="vs-row-text">
+            <div class="vs-step-num">02 · Migration</div>
+            <h3 class="vs-step-title">Into the <em>superficial venous network.</em></h3>
+            <p class="vs-step-body">The sphere migrates beneath the surface into the small capillary network just below the skin. It does not enter the bloodstream. It does not move.</p>
+            <div class="vs-step-detail">
+              <span>Localised</span>
+              <span>Non-systemic</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vs-row reveal">
+          <div class="vs-row-image">
+            <img src="images/vela_wrist_tint.jpg" alt="Inner wrist showing the faint silver tint along the veins" loading="lazy">
+            <div class="vs-row-stage-num">Stage 03 · 90 days of reading</div>
+          </div>
+          <div class="vs-row-text">
+            <div class="vs-step-num">03 · Ninety days</div>
+            <h3 class="vs-step-title">It reads. <em>You receive.</em></h3>
+            <p class="vs-step-body">For 90 days the sphere continuously measures hormonal markers, pollutant levels, and environmental exposure. Data flows to your app in real time. At day 90 it dissolves naturally, leaving only a faint silver trace along the veins. Dissolution can be triggered earlier through the app.</p>
+            <div class="vs-step-detail">
+              <span>Continuous</span>
+              <span>On-demand exit</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Specs at a glance -->
+    <div class="vs-specs reveal">
+      <div class="vs-specs-label">Specifications</div>
+      <div class="vs-specs-grid">
+        <div class="vs-spec">
+          <div class="vs-spec-label">Diameter</div>
+          <div class="vs-spec-value">8<em>mm</em></div>
+          <div class="vs-spec-unit">Smaller than a sesame seed</div>
+        </div>
+        <div class="vs-spec">
+          <div class="vs-spec-label">Reading cycle</div>
+          <div class="vs-spec-value">90<em>days</em></div>
+          <div class="vs-spec-unit">Aligned with quarterly subscription</div>
+        </div>
+        <div class="vs-spec">
+          <div class="vs-spec-label">Material</div>
+          <div class="vs-spec-value">Ag-Si</div>
+          <div class="vs-spec-unit">Bioresorbable silver-silicon composite</div>
+        </div>
+        <div class="vs-spec">
+          <div class="vs-spec-label">Reading frequency</div>
+          <div class="vs-spec-value">~6/<em>hr</em></div>
+          <div class="vs-spec-unit">Continuous, ambient-triggered sampling</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What it measures -->
+    <div class="vs-measures reveal">
+      <div class="vs-specs-label">What it measures</div>
+      <div class="vs-measures-grid">
+        <div class="vs-measure">
+          <div class="vs-measure-title">Hormonal</div>
+          <ul class="vs-measure-list">
+            <li>Estradiol fluctuation</li>
+            <li>Cortisol rhythm</li>
+            <li>FSH and LH levels</li>
+            <li>Progesterone baseline</li>
+            <li>Thyroid markers (T3, T4)</li>
+          </ul>
+        </div>
+        <div class="vs-measure">
+          <div class="vs-measure-title">Environmental</div>
+          <ul class="vs-measure-list">
+            <li>PFAS load (per- and polyfluoroalkyl)</li>
+            <li>Heavy metal exposure</li>
+            <li>PM2.5 absorption markers</li>
+            <li>Endocrine disruptor presence</li>
+            <li>VOC exposure index</li>
+          </ul>
+        </div>
+        <div class="vs-measure">
+          <div class="vs-measure-title">Physiological</div>
+          <ul class="vs-measure-list">
+            <li>Heart rate variability</li>
+            <li>Skin temperature</li>
+            <li>Hydration index</li>
+            <li>Sleep cycle markers</li>
+            <li>Inflammatory baseline (CRP-adjacent)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="vs-certs">
+      <span class="vs-certs-label">Certified by</span>
+      <div class="vs-cert-list">
+        <span class="cert-badge">Data Integrity Kitemark · Tier A</span>
+        <span class="cert-badge">Women's Health Hub, NHS</span>
+        <span class="cert-badge">EHPA certified</span>
+        <span class="cert-badge">European Health Futures Forum</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="app-section" id="app">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">05 / The app</span>
+      <span class="section-meta">iOS and Android · 2032</span>
+    </div>
+
+    <div class="app-inner">
+      <div class="app-phone-wrap reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="ps-status">9:41</div>
+            <div class="ps-status-right">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 16h2v2H2zm4-3h2v5H6zm4-3h2v8h-2zm4-3h2v11h-2zm4-3h2v14h-2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C7 3 2.73 6.11 1 10.5a11.99 11.99 0 0 0 22 0C21.27 6.11 17 3 12 3zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>
+            </div>
+
+            <div class="phone-screen-inner active" data-screen="home">
+              <div class="ps-header">
+                <div class="ps-title">Velaground</div>
+                <div class="ps-postcode" id="home-postcode">SE15 · Day 47</div>
+              </div>
+              <div class="ps-greeting">Morning, Claire</div>
+
+              <div class="ps-sphere-card">
+                <div class="ps-sphere-dot"></div>
+                <div class="ps-sphere-info">
+                  <div class="ps-sphere-info-title">Velasphere · Active</div>
+                  <div class="ps-sphere-info-status">Reading continuously</div>
+                </div>
+                <div class="ps-sphere-day">
+                  <div class="ps-sphere-day-num">47</div>
+                  <div class="ps-sphere-day-of">of 90</div>
+                </div>
+              </div>
+
+              <div class="ps-section-label">
+                <span>Live readings</span>
+                <span class="live-dot"></span>
+              </div>
+              <div class="ps-bio-grid">
+                <div class="ps-bio">
+                  <div class="ps-bio-value">42<span style="font-size:11px;">ms</span></div>
+                  <div class="ps-bio-label">HRV</div>
+                  <span class="ps-bio-pill pill-good">Normal</span>
+                </div>
+                <div class="ps-bio">
+                  <div class="ps-bio-value">36.8°</div>
+                  <div class="ps-bio-label">Skin temp</div>
+                  <span class="ps-bio-pill pill-mod">+0.4°</span>
+                </div>
+                <div class="ps-bio">
+                  <div class="ps-bio-value">3.2</div>
+                  <div class="ps-bio-label">PFAS load</div>
+                  <span class="ps-bio-pill pill-high">High</span>
+                </div>
+              </div>
+
+              <div class="ps-heat-card" id="heat-card">
+                <button class="ps-heat-dismiss" onclick="dismissHeat()">×</button>
+                <div class="ps-heat-head">
+                  <div class="ps-heat-dot"></div>
+                  <div class="ps-heat-title">Heatwave alert · Day 3</div>
+                </div>
+                <div class="ps-heat-graph">
+                  <svg viewBox="0 0 200 50" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="hg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#D85A30" stop-opacity="0.25"/>
+                        <stop offset="100%" stop-color="#D85A30" stop-opacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    <polygon fill="url(#hg)" points="0,45 0,30 33,26 66,20 100,14 133,17 166,24 200,28 200,45"/>
+                    <polyline fill="none" stroke="#D85A30" stroke-width="2" stroke-linecap="round" points="0,30 33,26 66,20 100,14 133,17 166,24 200,28"/>
+                    <circle cx="100" cy="14" r="3.5" fill="#D85A30" stroke="#FFF" stroke-width="1.5"/>
+                  </svg>
+                </div>
+                <div class="ps-action-grid">
+                  <div class="ps-action">Hydrate every 45m</div>
+                  <div class="ps-action">Stay cool 12–4</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="phone-screen-inner" data-screen="reading">
+              <div class="ps-header">
+                <div class="ps-title">Today</div>
+                <div class="ps-postcode">Sept 12</div>
+              </div>
+              <div class="ps-ring-wrap">
+                <div class="ps-ring-outer">
+                  <svg class="ps-ring-svg" viewBox="0 0 170 170">
+                    <circle cx="85" cy="85" r="72" stroke="rgba(196,168,130,0.15)" stroke-width="10" fill="none"/>
+                    <circle id="ring-progress" cx="85" cy="85" r="72" stroke="#D85A30" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="452" stroke-dashoffset="452" style="transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);"/>
+                  </svg>
+                  <div class="ps-ring-content">
+                    <div class="ps-ring-num" id="ring-num">68</div>
+                    <div class="ps-ring-label">Elevated</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ps-tag-row">
+                <span class="ps-tag warn">Heat</span>
+                <span class="ps-tag warn">Sleep ↓</span>
+                <span class="ps-tag">Cortisol ↑</span>
+                <span class="ps-tag warn">PFAS</span>
+              </div>
+              <div class="ps-breakdown">
+                <div class="ps-breakdown-label">Ring + self-report</div>
+                <div class="ps-bd-row">
+                  <div class="ps-bd-label-col">Biometric</div>
+                  <div class="ps-bd-bar"><div class="ps-bd-fill" data-w="72" style="width: 0%; background: var(--sage-deep);"></div></div>
+                  <div class="ps-bd-pct">72%</div>
+                </div>
+                <div class="ps-bd-row">
+                  <div class="ps-bd-label-col">Environmental</div>
+                  <div class="ps-bd-bar"><div class="ps-bd-fill" data-w="75" style="width: 0%; background: var(--sand);"></div></div>
+                  <div class="ps-bd-pct">75%</div>
+                </div>
+                <div class="ps-bd-row">
+                  <div class="ps-bd-label-col">Physical</div>
+                  <div class="ps-bd-bar"><div class="ps-bd-fill" data-w="60" style="width: 0%; background: var(--terracotta);"></div></div>
+                  <div class="ps-bd-pct">60%</div>
+                </div>
+                <div class="ps-bd-row">
+                  <div class="ps-bd-label-col">Emotional</div>
+                  <div class="ps-bd-bar"><div class="ps-bd-fill" data-w="55" style="width: 0%; background: var(--sage-soft);"></div></div>
+                  <div class="ps-bd-pct">55%</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="phone-screen-inner" data-screen="care">
+              <div class="ps-header">
+                <div class="ps-title">This week</div>
+                <div class="ps-postcode">Week 7 of 13</div>
+              </div>
+              <div class="ps-greeting">Tap to mark a target complete</div>
+              <div class="ps-section-label"><span>Your targets</span><span>Updates Mon</span></div>
+              <div class="ps-targets-grid">
+                <div class="ps-target">
+                  <div class="ps-target-head">
+                    <div class="ps-target-label">Hydration</div>
+                    <div class="ps-target-check"></div>
+                  </div>
+                  <div class="ps-target-target">2.5L · daily</div>
+                  <div class="ps-target-bar"><div class="ps-target-fill" style="width: 68%;"></div></div>
+                  <div class="ps-target-pct">68%</div>
+                </div>
+                <div class="ps-target">
+                  <div class="ps-target-head">
+                    <div class="ps-target-label">Active mins</div>
+                    <div class="ps-target-check"></div>
+                  </div>
+                  <div class="ps-target-target">150 / week</div>
+                  <div class="ps-target-bar"><div class="ps-target-fill" style="width: 45%;"></div></div>
+                  <div class="ps-target-pct">45%</div>
+                </div>
+                <div class="ps-target">
+                  <div class="ps-target-head">
+                    <div class="ps-target-label">Sleep by 22:30</div>
+                    <div class="ps-target-check"></div>
+                  </div>
+                  <div class="ps-target-target">5 of 7 nights</div>
+                  <div class="ps-target-bar"><div class="ps-target-fill" style="width: 57%;"></div></div>
+                  <div class="ps-target-pct">57%</div>
+                </div>
+                <div class="ps-target">
+                  <div class="ps-target-head">
+                    <div class="ps-target-label">Breathwork</div>
+                    <div class="ps-target-check"></div>
+                  </div>
+                  <div class="ps-target-target">7 / week</div>
+                  <div class="ps-target-bar"><div class="ps-target-fill" style="width: 42%;"></div></div>
+                  <div class="ps-target-pct">42%</div>
+                </div>
+              </div>
+              <div class="ps-section-label"><span>Suggestions for SE15</span></div>
+              <div class="ps-suggestion">
+                <div class="ps-sug-head">
+                  <div class="ps-sug-title">Morning walks</div>
+                  <span class="ps-sug-tag">Movement</span>
+                </div>
+                <div class="ps-sug-desc">Your HRV recovers best with early low-intensity movement. Avoid the A2 corridor.</div>
+              </div>
+              <div class="ps-suggestion">
+                <div class="ps-sug-head">
+                  <div class="ps-sug-title">No screens after 21:30</div>
+                  <span class="ps-sug-tag">Rest</span>
+                </div>
+                <div class="ps-sug-desc">Sleep onset delayed by 40 min on screen-heavy evenings.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-content reveal">
+        <div class="app-eyebrow">The Velaground App</div>
+        <h2 class="app-headline">Your data, <em>readable.</em></h2>
+        <p class="app-body">The app connects to your Velasphere and shows what it is reading in plain language. No jargon. No ambiguity about what the numbers mean.</p>
+
+        <div class="app-tabs">
+          <button class="app-tab active" data-screen="home">Home</button>
+          <button class="app-tab" data-screen="reading">Today's reading</button>
+          <button class="app-tab" data-screen="care">Care plan</button>
+        </div>
+
+        <div class="app-features">
+          <div class="app-feature">
+            <span class="af-num">01</span>
+            <span class="af-text"><strong>Live readings.</strong> Hormonal markers and pollutant levels, updated continuously.</span>
+          </div>
+          <div class="app-feature">
+            <span class="af-num">02</span>
+            <span class="af-text"><strong>Your Ground Report, digitally.</strong> Full pollution profile for your postcode in real time.</span>
+          </div>
+          <div class="app-feature">
+            <span class="af-num">03</span>
+            <span class="af-text"><strong>Heatwave alerts.</strong> Notifications when conditions are likely to amplify your symptoms.</span>
+          </div>
+          <div class="app-feature">
+            <span class="af-num">04</span>
+            <span class="af-text"><strong>On-demand dissolution.</strong> Dissolve your Velasphere early through the app at any time.</span>
+          </div>
+          <div class="app-feature">
+            <span class="af-num">05</span>
+            <span class="af-text"><strong>Your data stays yours.</strong> Certified under the Data Integrity Kitemark.</span>
+          </div>
+        </div>
+
+        <p class="app-availability">iOS and Android · Available with your first quarter</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonial-section" id="testimonials">
+  <div class="container">
+    <div class="testimonial-inner reveal">
+      <div class="t-eyebrow">From the first quarter pilot · London 2032</div>
+
+      <div class="t-video">
+        <iframe
+          src="https://www.youtube.com/embed/BWPYGYJtrMQ?rel=0&modestbranding=1"
+          title="Velaground subscribers · First quarter testimonials"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>
+      <div class="t-video-caption">
+        <span class="left">First quarter subscribers · in their own words</span>
+        <span>Recorded September 2032</span>
+      </div>
+
+      <div class="t-video-divider">Written reflections</div>
+
+      <blockquote class="t-quote">"My hot flashes used to wake me at three in the morning. Every night. After my first box, I started sleeping through. The card showed me my street has been carrying the worst air in the borough for years. <em>Nobody had ever told me that.</em>"</blockquote>
+      <div class="t-cite">
+        <div class="t-avatar">C</div>
+        <div class="t-cite-meta">
+          <span class="t-name">Claire M.</span>
+          <span class="t-detail">50 · SE15 · Subscriber since spring 2032</span>
+        </div>
+      </div>
+      <div class="t-row">
+        <div class="reveal">
+          <p class="t-mini-quote">"I've watched my mum hide her symptoms for years. The Velasphere just sits there, reading, and her app tells her what's happening. She doesn't have to explain herself to anyone."</p>
+          <div class="t-mini-cite">Poppy R. · 28 · subscribing for her mother · E14</div>
+        </div>
+        <div class="reveal" data-delay="1">
+          <p class="t-mini-quote">"I work in an old building. Damp, dust, the lot. The first Ground Report was the first time anyone had connected that to how I'd been feeling. It made sense, finally."</p>
+          <div class="t-mini-cite">Joyce C. · 54 · cleaner · SE13</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">06 / Questions</span>
+      <span class="section-meta">About the Velasphere</span>
+    </div>
+    <div class="faq-inner">
+      <div class="faq-intro reveal">
+        <h2>Common questions, <em>answered.</em></h2>
+        <p>About the Velasphere, the data it reads, and what happens during your 90-day cycle.</p>
+      </div>
+      <div class="faq-list reveal" data-delay="1">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>Does it hurt?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">No. The Velasphere is held against the skin under gentle pressure. There is no needle, no incision, and no skin damage. Most subscribers describe a slight cool sensation during the 30-second hold, and nothing afterwards.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>What if I want to remove it before 90 days?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Open the Velaground app and tap <strong>Dissolve now</strong>. The sphere breaks down within 4 to 6 hours and exits naturally. There is no procedure, no clinic visit, no waiting.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>Is the silver tint permanent?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">No. The trace fades over 8 to 12 weeks after dissolution. If you resubscribe for a second quarter, a new Velasphere is placed on the opposite wrist so the tint sits evenly across both arms over time.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>Where does my data go?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Readings are stored on your device first, then encrypted and synced to your private Velaground account. <strong>Aggregated, anonymised postcode data</strong> is used to calibrate boxes for your area. Individual readings are never shared with third parties, advertisers, employers, or insurers. Certified under the Data Integrity Kitemark, Tier A.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>Can I use it if I'm on HRT or other medication?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Yes. The Velasphere reads markers without interacting with them. If you are on HRT, your prescription continues unchanged. Many subscribers use Velaground alongside HRT to track how their body responds to dose adjustments. Speak to your GP about anything you observe in your readings.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span>Can I shower, swim, or exercise with it?</span>
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Yes, to all three. Once absorbed, the Velasphere sits beneath the surface of the skin and is unaffected by water, soap, sweat, or temperature change. You do not need to protect it, cover it, or change your routine in any way for the full 90 days.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">07 / Pricing</span>
+      <span class="section-meta">Cancel anytime</span>
+    </div>
+
+    <div class="pricing-inner">
+      <div class="pricing-left reveal">
+        <h2>Straightforward pricing. <em>No introductory offer.</em></h2>
+        <p>One quarterly subscription. Ships at the start of each season. Cancel before the next box ships and you will not be charged.</p>
+        <p class="pricing-meta">Available across all 32 boroughs of London. Expanding outside London in 2033.</p>
+
+        <div class="subsidy-note">
+          <p><strong>£19.99 per quarter with a subsidy.</strong></p>
+          <p>If you receive any of the following, you qualify for the subsidised rate. Self-declared at signup.</p>
+          <ul class="subsidy-list">
+            <li>Universal Credit</li>
+            <li>Pension Credit</li>
+            <li>Income Support or Income-based JSA</li>
+            <li>Housing Benefit</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reveal" data-delay="1">
+        <div class="pricing-cards">
+          <div class="pricing-card">
+            <div class="pc-header">
+              <div class="pc-label">Standard rate</div>
+            </div>
+            <div class="pc-price">£34.99</div>
+            <div class="pc-period">per quarter · billed quarterly</div>
+            <p class="pc-summary">Full quarterly subscription. Five items per box, calibrated to your postcode. App included.</p>
+            <a href="#" class="pc-cta"><span>Begin your first quarter →</span></a>
+          </div>
+
+          <div class="pricing-card featured">
+            <div class="pc-header">
+              <div class="pc-label">Subsidised rate</div>
+            </div>
+            <div class="pc-price">£19.99</div>
+            <div class="pc-period">per quarter · for eligible subscribers</div>
+            <p class="pc-summary">Identical box. Identical app. Reduced rate for women receiving means-tested benefits.</p>
+            <a href="#" class="pc-cta"><span>Check eligibility & subscribe</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">08 / Get in touch</span>
+      <span class="section-meta">Response within two working days</span>
+    </div>
+    <div class="contact-inner">
+      <div class="contact-left reveal">
+        <h2>Questions, <em>directly answered.</em></h2>
+        <p>About subscriptions, eligibility, the Velasphere, your postcode data, or anything else. We read every message and respond within two working days.</p>
+        <a href="mailto:srishtimadan.here@gmail.com" class="contact-email">srishtimadan.here@gmail.com →</a>
+      </div>
+
+      <form class="contact-form reveal" data-delay="1" onsubmit="submitContact(event)">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">Your name</label>
+            <input type="text" class="form-input" placeholder="First and last name" required>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" placeholder="your@email.com" required>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">What is this about?</label>
+          <select class="form-select">
+            <option>Subscriptions</option>
+            <option>Subsidised rate eligibility</option>
+            <option>The Velasphere</option>
+            <option>Postcode data</option>
+            <option>Press</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Your message</label>
+          <textarea class="form-textarea" placeholder="Tell us what you'd like to know" required></textarea>
+        </div>
+        <button type="submit" class="form-submit"><span>Send message</span></button>
+        <div class="form-success" id="form-success">Thank you. We will respond within two working days.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <svg class="footer-logo" viewBox="0 0 273.26 53.79" xmlns="http://www.w3.org/2000/svg">
+          <g><path fill="#fff" d="M37.82,1.41c.9,0,1.35.38,1.35,1.13c0,.31-.11,.62-.33,.91l-.22,.21l-.47,.4c-.31,.26-.57,.54-.77,.85-.2,.31-.38,.65-.52,1.02l-1.79,6.31c-.64,2.3-1.42,4.68-2.32,7.15c-.9,2.47-1.9,5.06-3,7.76c-1.32,3.23-2.61,6.06-3.87,8.48c-1.26,2.42-2.49,4.46-3.68,6.13c-.53,.75-.91,1.24-1.13,1.46c-.31,.31-.6,.55-.85,.72s-.51,.25-.77,.25c-.46,0-.85-.14-1.17-.43c-.32-.29-.65-.67-.98-1.14c-.83-1.16-1.64-2.43-2.43-3.8c-.79-1.38-1.58-2.88-2.37-4.49c-.72-1.4-1.39-2.82-2.03-4.27c-.63-1.45-1.25-2.95-1.83-4.49c-1.16-3.07-2.21-6.15-3.16-9.24c-.95-3.09-1.79-6.23-2.52-9.43c-.31-1.42-1.05-2.47-2.21-3.17c-.5-.26-.74-.65-.74-1.19c0-.31,.14-.58,.41-.8c.28-.22,.74-.33,1.41-.33h8.05c.53,0,.84,.02,.91,.06c.57,.17,.85,.56,.85,1.19c0,.22-.09,.44-.28,.66-.18,.22-.49,.43-.91,.63-.42,.2-.74,.37-.96,.5-.22,.13-.35,.21-.39,.25-.26,.2-.46,.48-.59,.83-.14,.35-.21,.76-.21,1.24c0,.83,.16,1.93,.47,3.31s.76,3.04,1.35,4.99c.72,2.28,1.45,4.42,2.19,6.42c.74,2,1.53,3.94,2.34,5.82c.82,1.87,1.69,3.7,2.6,5.49s1.92,3.59,3,5.43c.68-1.05,1.35-2.16,2-3.35c.65-1.19,1.27-2.44,1.86-3.76c.92-2.06,1.95-4.61,3.09-7.66c.59-1.56,1.13-3.04,1.63-4.42c.5-1.39,.96-2.72,1.38-4.01c1.34-4.19,2.01-7.03,2.01-8.52c0-1.01-.62-1.8-1.85-2.37-1.21-.57-1.82-1.09-1.82-1.57s.14-.76,.43-.91c.28-.15,.69-.22,1.23-.22h7.61Z"/></g>
+        </svg>
+        <p class="footer-line">A quarterly kit, built for the postcodes that need it.</p>
+      </div>
+      <div>
+        <div class="footer-col-label">In the box</div>
+        <ul class="footer-links">
+          <li><a href="#products">The Ground Report</a></li>
+          <li><a href="#products">Urban Resilience Formula</a></li>
+          <li><a href="#products">Ground Strips</a></li>
+          <li><a href="#products">The Weekly</a></li>
+          <li><a href="#velasphere">Velasphere</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-label">Information</div>
+        <ul class="footer-links">
+          <li><a href="#postcode">Postcode data</a></li>
+          <li><a href="#velasphere">How the Velasphere works</a></li>
+          <li><a href="#app">The app</a></li>
+          <li><a href="#testimonials">Subscribers</a></li>
+          <li><a href="#">Privacy & terms</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-label">Account</div>
+        <ul class="footer-links">
+          <li><a href="#pricing">Begin a subscription</a></li>
+          <li><a href="#pricing">Check eligibility</a></li>
+          <li><a href="#contact">Contact us</a></li>
+          <li><a href="#">Sign in</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <div class="footer-base-left">
+        <span>Velaground · A Vela service · 2032</span>
+        <span>Data Integrity Kitemark · Tier A</span>
+      </div>
+      <div class="footer-base-right">velaground.co</div>
+    </div>
+  </div>
+  <div class="ual-band">A speculative design project · MA Service Design · Design Futures · UAL London College of Communication · 2025–26</div>
+</footer>
+
+<script>
+(function() {
+  const progress = document.getElementById('scroll-progress');
+  const bar = document.getElementById('scroll-progress-bar');
+  const floatingCta = document.getElementById('floating-cta');
+  const hero = document.getElementById('hero');
+  function update() {
+    const heroBottom = hero.offsetTop + hero.offsetHeight;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = (window.scrollY / total) * 100;
+    bar.style.width = pct + '%';
+    const pastHero = window.scrollY > heroBottom - 200;
+    progress.classList.toggle('visible', pastHero);
+    floatingCta.classList.toggle('visible', pastHero);
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+(function() {
+  const eyebrow = document.querySelector('.hero-eyebrow');
+  const headline = document.querySelector('.hero-headline');
+  const body = document.querySelector('.hero-body');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > window.innerHeight) return;
+    const y = window.scrollY;
+    if (eyebrow)  eyebrow.style.transform  = `translateY(${y * 0.15}px)`;
+    if (headline) headline.style.transform = `translateY(${y * 0.10}px)`;
+    if (body)     body.style.transform     = `translateY(${y * 0.06}px)`;
+  }, { passive: true });
+})();
+
+(function() {
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  els.forEach(el => io.observe(el));
+})();
+
+const PROFILES = {
+  SE: { air: 28, water: 61, heat: 2.4, dust: 'High', note: '<strong>SE London carries a high combined exposure burden.</strong> River proximity increases humidity-driven particulate concentration. Active construction across Bermondsey, Peckham, and Lewisham adds significant dust load. Your box this quarter is calibrated for these conditions.' },
+  E:  { air: 32, water: 58, heat: 2.7, dust: 'Very high', note: '<strong>East London shows elevated PM2.5 from traffic corridors and legacy industrial sites.</strong> The Canary Wharf heat sink keeps night temperatures 2 to 3°C above regional average, which amplifies hormonal disruption overnight. Heat and particulate buffering are prioritised in your formula.' },
+  N:  { air: 19, water: 72, heat: 1.6, dust: 'Moderate', note: '<strong>North London sits mid-range in our network.</strong> Air quality is better than southern and eastern districts, though traffic particulates spike on the A1 and A10. Water quality markers are above average.' },
+  NW: { air: 17, water: 74, heat: 1.5, dust: 'Low-moderate', note: '<strong>NW London is one of the lower-burden postcodes in our current network.</strong> Proximity to Hampstead Heath and lower construction density keep particulate load manageable.' },
+  W:  { air: 15, water: 78, heat: 1.3, dust: 'Low', note: '<strong>W London postcodes show below-average contamination levels.</strong> Air and water quality are both strong relative to the network.' },
+  SW: { air: 14, water: 80, heat: 1.1, dust: 'Low', note: '<strong>SW London has the lowest average burden in the current network.</strong> River proximity in SW6 and SW10 adds humidity markers, but overall exposure is manageable.' },
+  EC: { air: 35, water: 55, heat: 3.1, dust: 'Very high', note: '<strong>The City carries the highest heat retention in the network.</strong> Dense urban canyon effect, limited vegetation, and heavy construction create a compounding burden.' },
+  WC: { air: 30, water: 60, heat: 2.8, dust: 'High', note: '<strong>Central London postcodes carry high particulate and heat loads year-round.</strong> WC sits in a high-traffic zone with significant ongoing construction.' },
+};
+const DUST_LEVELS = { 'Low': 15, 'Low-moderate': 30, 'Moderate': 50, 'High': 72, 'Very high': 90 };
+function airLevelClass(v) { if (v <= 12) return ['Good', 'good']; if (v <= 20) return ['Moderate', 'moderate']; if (v <= 28) return ['Elevated', 'elevated']; return ['High', 'high']; }
+function waterLevelClass(v) { if (v >= 80) return ['Good', 'good']; if (v >= 70) return ['Fair', 'moderate']; if (v >= 60) return ['Reduced', 'elevated']; return ['Poor', 'high']; }
+function heatLevelClass(v) { if (v <= 1.0) return ['Low', 'good']; if (v <= 1.8) return ['Moderate', 'moderate']; if (v <= 2.5) return ['Elevated', 'elevated']; return ['High', 'high']; }
+function dustLevelClass(d) { const map = { 'Low': 'good', 'Low-moderate': 'moderate', 'Moderate': 'moderate', 'High': 'elevated', 'Very high': 'high' }; return [d, map[d] || 'moderate']; }
+function lookupPostcode(raw) {
+  const pc = raw.trim().toUpperCase().replace(/\s+/g, '');
+  if (!pc) return null;
+  const area = pc.match(/^[A-Z]+/)?.[0] || '';
+  return PROFILES[area] || { air: 22, water: 68, heat: 1.8, dust: 'Moderate', note: '<strong>We are still expanding monitoring to your area.</strong> The data shown is drawn from regional averages.' };
+}
+function setLevel(id, [label, cls]) { const el = document.getElementById(id); el.textContent = label; el.className = 'level ' + cls; }
+function countUp(element, target, duration = 1200, decimals = 0) {
+  const start = performance.now();
+  const step = (now) => {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const value = target * eased;
+    element.textContent = decimals ? value.toFixed(decimals) : Math.round(value);
+    if (t < 1) requestAnimationFrame(step);
+    else element.textContent = decimals ? target.toFixed(decimals) : target;
+  };
+  requestAnimationFrame(step);
+}
+document.getElementById('postcode-submit').addEventListener('click', runLookup);
+document.getElementById('postcode-input').addEventListener('keydown', e => { if (e.key === 'Enter') runLookup(); });
+function runLookup() {
+  const val = document.getElementById('postcode-input').value;
+  const profile = lookupPostcode(val);
+  if (!profile) return;
+  const display = val.trim().toUpperCase();
+  document.getElementById('result-postcode-label').textContent = display || '—';
+  setLevel('em-air-level', airLevelClass(profile.air));
+  setLevel('em-water-level', waterLevelClass(profile.water));
+  setLevel('em-heat-level', heatLevelClass(profile.heat));
+  setLevel('em-dust-level', dustLevelClass(profile.dust));
+  document.getElementById('em-dust').textContent = profile.dust;
+  document.getElementById('result-note').innerHTML = profile.note;
+  const homePostcode = document.getElementById('home-postcode');
+  if (homePostcode && display) homePostcode.textContent = display + ' · Day 47';
+  const result = document.getElementById('exposure-result');
+  result.classList.add('visible');
+  setTimeout(() => {
+    countUp(document.getElementById('em-air'), profile.air);
+    countUp(document.getElementById('em-water'), profile.water);
+    countUp(document.getElementById('em-heat'), profile.heat, 1200, 1);
+    document.getElementById('bar-air').style.width = Math.min((profile.air / 40) * 100, 100) + '%';
+    document.getElementById('bar-water').style.width = Math.max(100 - profile.water, 10) + '%';
+    document.getElementById('bar-heat').style.width = Math.min((profile.heat / 3.5) * 100, 100) + '%';
+    document.getElementById('bar-dust').style.width = (DUST_LEVELS[profile.dust] || 50) + '%';
+  }, 150);
+  setTimeout(() => result.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
+}
+
+(function() {
+  const tabs = document.querySelectorAll('.app-tab');
+  const screens = document.querySelectorAll('.phone-screen-inner');
+  function switchTo(target) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.screen === target));
+    screens.forEach(s => s.classList.toggle('active', s.dataset.screen === target));
+    if (target === 'reading') animateReading();
+    if (target === 'care') animateCareBars();
+  }
+  function animateReading() {
+    const ring = document.getElementById('ring-progress');
+    const num = document.getElementById('ring-num');
+    if (ring) {
+      ring.style.strokeDashoffset = '452';
+      setTimeout(() => { ring.style.strokeDashoffset = (452 - (68/100) * 452).toString(); }, 60);
+    }
+    if (num) {
+      num.textContent = '0';
+      setTimeout(() => countUp(num, 68, 1200), 100);
+    }
+    const fills = document.querySelectorAll('.ps-bd-fill');
+    fills.forEach(f => {
+      f.style.width = '0%';
+      setTimeout(() => { f.style.width = f.dataset.w + '%'; }, 150);
+    });
+  }
+  function animateCareBars() {
+    const fills = document.querySelectorAll('.ps-target-fill');
+    fills.forEach((f, i) => {
+      const w = f.style.width;
+      f.style.width = '0%';
+      setTimeout(() => { f.style.width = w; }, 100 + i * 80);
+    });
+  }
+  tabs.forEach(tab => tab.addEventListener('click', () => switchTo(tab.dataset.screen)));
+  let autoIdx = 0;
+  const order = ['home', 'reading', 'care'];
+  let rotateTimer = null;
+  let stopped = false;
+  const rotate = () => { if (stopped) return; autoIdx = (autoIdx + 1) % order.length; switchTo(order[autoIdx]); };
+  tabs.forEach(t => t.addEventListener('click', () => { stopped = true; clearInterval(rotateTimer); }));
+  const phoneEl = document.querySelector('.phone');
+  if (phoneEl) {
+    const pio = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !stopped) { rotateTimer = setInterval(rotate, 6500); }
+      else { clearInterval(rotateTimer); }
+    }, { threshold: 0.3 });
+    pio.observe(phoneEl);
+  }
+})();
+
+function dismissHeat() {
+  const card = document.getElementById('heat-card');
+  if (!card) return;
+  card.style.transition = 'opacity 0.4s, transform 0.4s';
+  card.style.opacity = '0';
+  card.style.transform = 'translateX(20px)';
+  setTimeout(() => {
+    card.style.transition = '';
+    card.style.opacity = '1';
+    card.style.transform = '';
+  }, 4500);
+}
+
+document.querySelectorAll('.ps-target').forEach(t => {
+  t.addEventListener('click', () => t.classList.toggle('completed'));
+});
+
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  item.classList.toggle('open');
+}
+
+function toggleProduct(btn) {
+  const item = btn.parentElement;
+  const wasOpen = item.classList.contains('open');
+  // Optional: close other products when opening a new one (uncomment for accordion behaviour)
+  // document.querySelectorAll('.product-item.open').forEach(i => { if (i !== item) i.classList.remove('open'); });
+  item.classList.toggle('open', !wasOpen);
+}
+
+function submitContact(e) {
+  e.preventDefault();
+  const success = document.getElementById('form-success');
+  success.classList.add('visible');
+  e.target.querySelector('.form-submit').style.display = 'none';
+  e.target.querySelectorAll('input, textarea, select').forEach(el => el.disabled = true);
+}
+</script>
+
+</body>
+</html>
